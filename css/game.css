@@ -1,0 +1,94 @@
+#UI_rightBar
+{
+	background-color: white;
+	width: 200px;
+	height: 500px;
+	position:fixed;
+
+	right: 0px;
+	top: 0px;
+
+	padding:10px;
+}
+
+#UI_controlBar
+{
+	background-color: #ffffff;
+	position: fixed;
+	width: 210px;
+	height: 210px;
+	position: fixed;
+
+	padding: 10px;
+
+	right: 0px;
+	bottom: 0px;
+}
+
+#UI_resources
+{
+	position:fixed;
+	width: 100%;
+	height: 32px;
+	top: 0px;
+	left: 0px;
+
+	background-color: #ffffff;
+}
+.UI_resourceImg
+{
+	float: left;
+}
+.UI_resource
+{
+	float: left;
+	min-width: 100px;
+}
+.UI_resource_p
+{
+	font-size: 32px;
+	float: left;
+}
+
+#UI_b_endTurn
+{
+	background-color: #ff0000;
+	display:block;
+	width:200px;
+	height:200px;
+
+	border-radius: 10px;
+}
+
+#UI_b_endTurn:hover
+{
+	background-color: #aa3333;
+}
+#UI_b_endTurn:active
+{
+	background-color: #33aa33;
+}
+
+.UI_buildingButton
+{
+	background-color: #FF0000;
+	width: 60px;
+	height: 60px;
+	float: left;
+	margin: 5px;
+}
+.UI_buildingButton:hover
+{
+	background-color: #aa3333;
+}
+.UI_buildingButton:active
+{
+	background-color: #33aa33;
+}
+
+
+/*FPS counter*/
+#stats { position: absolute; top:0; left: 0 }
+#stats #fps { background: transparent !important }
+#stats #fps #fpsText { color: #aaa !important }
+#stats #fps #fpsGraph { display: none }
