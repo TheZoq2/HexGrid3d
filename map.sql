@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 18, 2013 at 12:46 PM
+-- Generation Time: Jan 02, 2014 at 11:14 AM
 -- Server version: 5.6.12-log
 -- PHP Version: 5.4.12
 
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `base` (
 --
 
 INSERT INTO `base` (`index`, `sizeX`, `sizeY`, `currentTurn`) VALUES
-(1, 25, 25, 'Firefox');
+(1, 25, 25, 'a');
 
 -- --------------------------------------------------------
 
@@ -56,6 +56,46 @@ CREATE TABLE IF NOT EXISTS `buildings` (
   `type` int(11) DEFAULT NULL,
   `owner` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=19 ;
+
+--
+-- Dumping data for table `buildings`
+--
+
+INSERT INTO `buildings` (`id`, `posX`, `posY`, `type`, `owner`) VALUES
+(1, 0, 0, 1, 'v'),
+(2, 3, 1, 1, 'v'),
+(3, 0, 0, 0, 'a'),
+(4, 5, 2, 0, 'a'),
+(5, 3, 3, 0, 'xo'),
+(6, 4, 4, 1, 'a'),
+(7, 6, 3, 0, 'a'),
+(8, 10, 5, 1, 'a'),
+(9, 1, 3, 0, 'a'),
+(10, 2, 2, 1, 'a'),
+(11, 8, 8, 0, 'a'),
+(12, 8, 9, 3, 'a'),
+(13, 7, 7, 1, 'a'),
+(14, 12, 6, 1, 'Firefox'),
+(15, 12, 6, 1, 'Firefox'),
+(16, 8, 11, 1, 'f'),
+(17, 8, 11, 1, 'f'),
+(18, 5, 9, 0, 'Firefox');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `oldplayers`
+--
+
+CREATE TABLE IF NOT EXISTS `oldplayers` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(100) NOT NULL,
+  `oil` int(11) NOT NULL,
+  `crystal` int(11) NOT NULL,
+  `metal` int(11) NOT NULL,
+  `food` int(11) NOT NULL,
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -71,15 +111,16 @@ CREATE TABLE IF NOT EXISTS `players` (
   `crystal` int(11) NOT NULL,
   `metal` int(11) NOT NULL,
   `food` int(11) NOT NULL,
+  `lastActive` int(10) unsigned NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
 
 --
 -- Dumping data for table `players`
 --
 
-INSERT INTO `players` (`ID`, `Name`, `oil`, `crystal`, `metal`, `food`) VALUES
-(1, 'Firefox', 2000, 200, 2000, 1500);
+INSERT INTO `players` (`ID`, `Name`, `oil`, `crystal`, `metal`, `food`, `lastActive`) VALUES
+(19, 'a', 2000, 200, 2000, 1500, 1388522756);
 
 -- --------------------------------------------------------
 
