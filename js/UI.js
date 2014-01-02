@@ -26,8 +26,6 @@ function setupUI()
 			var IDname = this.id;
 			//Spliting the ID
 			selID = parseInt(IDname.split("_")[1]);
-
-			console.log(selID);
 		};
 
 		bar_right.appendChild(button);

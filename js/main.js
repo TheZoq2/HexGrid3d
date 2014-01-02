@@ -10,6 +10,7 @@ var mapUpdateInterval = 5000;
 
 var selTool = 0;
 var selID = 0;
+var lastID = 0;
 
 function mainLoop()
 {
@@ -36,7 +37,7 @@ function mainLoop()
 		//if a building is selected
 		if(selTool == 1)
 		{
-			drawTextToScreen("Current selected: " + selID, 20, 20);	
+			/*drawTextToScreen("Current selected: " + selID, 20, 20);	
 			//Getting the current cordinates
 			var xHex = hexFromCordX(getMouseX(), getMouseY());
 			var yHex = hexFromCordY(getMouseX(), getMouseY());
@@ -51,8 +52,25 @@ function mainLoop()
 			if(getMouseClick() == 1)
 			{
 				addTurnBuilding(selID, xHex, yHex);
+			}*/
+			var tileX = hexFromCordX(mouseX3d, mouseZ3d);
+			var tileZ = hexFromCordY(mouseX3d, mouseZ3d);
+			var posX = coordFromHexX(tileX, tileZ);
+			var posZ = coordFromHexY(tileX, tileZ);
+
+			if(cursorObject == 0 || lastID != selID)
+			{
+				setCursorObject(buildingData[selID].object);
 			}
 
+			setCursorObjectPos(posX, 0, posZ);
+
+			if(mouseClick == true)
+			{
+				addTurnBuilding(selID, tileX, tileZ)
+			}
+
+			lastID = selID;
 		}
 	}
 	if(gameState == 2) //waiting for turn
@@ -189,12 +207,22 @@ function handleBuildingData(data)
 
 		if(posX != -1 && posY != -1) //Making sure type and positions are relevant
 		{
+			object = buildingData[type].object.clone();
+			object.position.x = coordFromHexX(posX, posY);
+			object.position.z = coordFromHexY(posX, posY);
+
+			material = new THREE.MeshBasicMaterial({color:0x0000ff, ambient: 0x111111});
+
+			setGroupMaterial(object, material);
 			//Adding the building to the building array
 			buildings[i] = {
 				x: posX,
 				y: posY,
-				type: type
+				type: type,
+				object: object
 			};
+
+			scene.add(buildings[i].object); 
 		}
 	}
 }
@@ -235,6 +263,7 @@ function handleResourceData(data)
 }
 function onTurnUpdate(data) //Function to run when a response from an update request has been sent
 {
+	console.log(data);
 	if(data == "waitingForOthers") //If it is not the clients turn
 	{
 
@@ -271,6 +300,11 @@ function endTurn() //This function is run when the user ends the tiurn
 	});
 
 	//Clearing buildings constructed this turn
+	for(var i = 0; i < turnBuildings.length; i++)
+	{
+		scene.remove(turnBuildings[i].object);
+	}
+
 	turnBuildings = Array();
 
 	gameState = 2;

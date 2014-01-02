@@ -33,6 +33,8 @@
 
 	session_start();
 
+	updateLastAcitivity();
+	
 	if(isset($_POST["type"]))
 	{
 		if($_POST["type"] == "r_turnData")
@@ -55,6 +57,8 @@
 			{
 				echo "makeTurn"; //Tell the client that its its turn
 			}
+			checkPlayersActive();
+
 			exit();
 		}
 		if($_POST["type"] == "r_mapData")
@@ -102,6 +106,20 @@
 	}
 
 	echo "error_noType";
+
+	function updateLastAcitivity()
+	{
+		$time = time();
+
+		require_once("connect.php");
+
+		$sqlRequest = "UPDATE `players` SET `lastActive`=:time WHERE `Name`=:name";
+		$dbo = getDBO("map");
+		$stmt = $dbo->prepare($sqlRequest);
+		$stmt->bindParam(":name", $_SESSION["Player"]);
+		$stmt->bindParam(":time", $time);
+		$stmt->execute();
+	}
 
 	function createBuilding($posX, $posY, $type)
 	{
@@ -393,7 +411,10 @@
 
 		if($lastExists == false) //The last player does not exist anymore, give the turn to the first player
 		{
-			setNextPlayer($players[0]["Name"]);
+			if(count($players))
+			{
+				setNextPlayer($players[0]["Name"]);
+			}
 		}
 		else
 		{
@@ -476,5 +497,52 @@
 		}
 
 		return $lastExists;
+	}
+
+	function checkPlayersActive()
+	{
+		$plrTimeout = 15; //If there has been no activity from a player for this amount of time, they will be removed from the game
+		
+		require_once("connect.php");
+		//Fetching all the players
+		$sqlRequest = "SELECT * FROM `players` WHERE 1";
+		$dbo = getDBO("map");
+		$stmt = $dbo->prepare($sqlRequest);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+
+		$time = time();
+
+		foreach($result as $player)
+		{
+			if($player["lastActive"] + $plrTimeout < $time)
+			{
+				//The player is inactive, remove them
+				$sqlRequest = "DELETE FROM `players` WHERE `Name`=:name";
+				$stmt = $dbo->prepare($sqlRequest);
+				$stmt->bindParam(":name", $player["Name"]);
+				$stmt->execute();
+
+				//Checking if the player was making a turn
+				$sqlRequest = "SELECT * FROM `base` WHERE 1";
+				$stmt = $dbo->prepare($sqlRequest);
+				$stmt->execute();
+				$baseResult = $stmt->fetch();
+
+				if($baseResult["currentTurn"] == $player["Name"])
+				{
+					selectNextPlayer();
+				}
+			}
+		}
+	}
+	function playerExists()
+	{
+		$playerName = $_SESSION["Player"];
+
+		require_once("connect.php");
+		$dbo = getDBO("map");
+
+		$sqlRequest = "SELECT * FROM `players` WHERE `Name`=:name";
 	}
 ?>

@@ -6,11 +6,15 @@ function setup()
 
 	setupHex(); //Game.js
 
-    document.onkeydown = keyPressed;
-    document.onkeyup = keyReleased;
-    document.addEventListener('DOMMouseScroll', onScroll, false)
-    document.onmousewheel = onScroll; //Yeay for browsers!!!
-    document.addEventListener("mousemove", doMouseMove, false); //Assumes that the canvas is fullscreen, change if the requirements change
+    container = document.getElementById("canvasContainer");
+
+    container.onkeydown = keyPressed;
+    container.onkeyup = keyReleased;
+    container.addEventListener('DOMMouseScroll', onScroll, false)
+    container.onmousewheel = onScroll; //Yeay for browsers!!!
+    container.addEventListener("mousemove", doMouseMove, false); //Assumes that the canvas is fullscreen, change if the requirements change
+    container.addEventListener("mousedown", doMouseDown, false);
+    container.addEventListener("mouseup", doMouseUp, false);
 
 	load3d(); //3d.js
 

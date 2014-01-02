@@ -73,6 +73,8 @@
             </a>
         </div>
 
+        <div id="canvasContainer"></div>
+
         <script>
             setup();
         </script>

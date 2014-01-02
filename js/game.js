@@ -9,8 +9,8 @@ var tileSprites = Array();
 var tileData = Array();
 
 var tileSize = 126;
-var tileHeight = tileSize * 2;
-var tileWidth = Math.sqrt(3.0) / 2.0 * tileHeight;
+/*var tileHeight = tileSize * 2;
+var tileWidth = Math.sqrt(3.0) / 2.0 * tileHeight;*/
 
 var zoomAmount = 0.1;
 var zoomTarget = 0.1;
@@ -56,7 +56,14 @@ function setupData()
 		metalCost: 1000,
 		crystalCost: 50,
 
-		sightRange: 3
+		sightRange: 3,
+
+		objectPath: "3d/MainBase.dae",
+		object: 0,
+
+		scaleX: 0.7,
+		scaleY: 0.7,
+		scaleZ: 0.7
 	};
 	//Oil rig thing
 	buildingData[1] = {
@@ -67,7 +74,14 @@ function setupData()
 		metalCost: 300,
 		crystalCost: 100,
 
-		sightRange: 2
+		sightRange: 2,
+
+		objectPath: "3d/OilDrill.dae",
+		object: 0,
+
+		scaleX: 0.7,
+		scaleY: 0.7,
+		scaleZ: 0.7
 	};
 	buildingData[2] = {
 		reqTiles: [],
@@ -77,7 +91,14 @@ function setupData()
 		metalCost: 550,
 		crystalCost: 350,
 
-		sightRange: 2
+		sightRange: 2,
+
+		objectPath: "3d/farm.dae",
+		object: 0,
+
+		scaleX: 0.7,
+		scaleY: 0.7,
+		scaleZ: 0.7
 	};
 	buildingData[3] = {
 		reqTiles: [3],
@@ -87,7 +108,14 @@ function setupData()
 		metalCost: 300,
 		crystalCost: 0,
 
-		sightRange: 2
+		sightRange: 2,
+
+		objectPath: "3d/MainBase.dae",
+		object: 0,
+
+		scaleX: 0.7,
+		scaleY: 0.7,
+		scaleZ: 0.7
 	};
 
 	tileData[0] = {
@@ -329,11 +357,18 @@ function addTurnBuilding(type, x, y)
 		setMetal(getMetal() - buildingData[type].metalCost);
 		setCrystal(getCrystal() - buildingData[type].crystalCost);
 
+		object = buildingData[type].object.clone();
+		object.position.x = coordFromHexX(x, y);
+		object.position.z = coordFromHexY(x, y);
+
 		turnBuildings[turnBuildings.length] = {
 			type: type,
 			x: x,
-			y: y
+			y: y,
+			object: object
 		};
+
+		scene.add(turnBuildings[turnBuildings.length-1].object);
 	}
 }
 function canAffordBuilding(buildingID)
@@ -509,7 +544,6 @@ function hexFromCordY(xCoord, yCoord)
 			}
 		}
 	}
-
 	return lowY;
 }
 

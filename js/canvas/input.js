@@ -1,6 +1,11 @@
 var mouseX = 0;
 var mouseY = 0;
 
+var mouseX3d = 0;
+var mouseZ3d = 0;
+var moveX3d = 0;
+var moveY3d = 0;
+
 var mouseFrameX;
 var mouseFrameY
 
@@ -50,13 +55,13 @@ function updateInput() //Call this to get all mouse hold features working
 	{
 		mouseHeldFor = totalTime - mouseHoldStart;
 		//Checking how long it has been held
-		if(mouseHeldFor > mouseHoldTime || (getMouseMoveX() != 0 && getMouseMoveY()))
+		if(mouseHeldFor > mouseHoldTime || (getMouseMoveX() != 0 && getMouseMoveY() != 0))
 		{
 			mouseDown = true;
 		}
 	}
 
-	if(releaseTime != totalTime)
+	if(releaseTime < totalTime  - 100)
 	{
 		mouseClick = false;
 	}
@@ -68,22 +73,52 @@ function updateInput() //Call this to get all mouse hold features working
     //Updating the camera position
     if(input.up)
     {
-        lookingAtZ = lookingAtZ - 0.1;
+        lookingAtZ = lookingAtZ - 0.1 * speedMod;
     }
     if(input.down)
     {
-        lookingAtZ = lookingAtZ + 0.1
+        lookingAtZ = lookingAtZ + 0.1 * speedMod;
     }
     if(input.left)
     {
-        lookingAtX = lookingAtX - 0.1;
+        lookingAtX = lookingAtX - 0.1 * speedMod;
     }
     if(input.right)
     {
-        lookingAtX = lookingAtX + 0.1;
+        lookingAtX = lookingAtX + 0.1 * speedMod;
     }
 
     cameraHeight = cameraHeight - getScrollAmount() * 0.05;
+
+    //Calculating how much the mouse has moved in 3d space (On Y = 0)
+    moveX3d = 0;
+    moveY3d = 0;
+    var oldMouseX3d = mouseX3d;
+    var oldmouseZ3d = mouseZ3d;
+
+    mouse3d = screenTo3d(getMouseX(), getMouseY());
+    mouseX3d = mouse3d.x;
+    mouseZ3d = mouse3d.z;
+
+    moveX3d = mouseX3d - oldMouseX3d;
+    moveY3d = mouseZ3d - oldmouseZ3d;
+
+    //calculating how much the cursor has moved in the 3d space ignoring the camera movement
+    var oldX = getMouseX() - getMouseMoveX();
+    var oldY = getMouseY() - getMouseMoveY();
+
+    var old3d = screenTo3d(oldX, oldY);
+    var new3d = screenTo3d(getMouseX(), getMouseY());
+
+    var MoveX3dNoCam = new3d.x - old3d.x;
+    var MoveZ3dNoCam = new3d.z - old3d.z;
+
+    //Moving the camera if the mouse is held down
+    if(mouseDown == true)
+    {
+    	lookingAtX -= MoveX3dNoCam;
+    	lookingAtZ -= MoveZ3dNoCam;
+    }
 }
 
 function doMouseDown(e)
@@ -98,6 +133,7 @@ function doMouseDown(e)
 }
 function doMouseUp(e)
 {
+
     mouseHeld = false;
 
     mouseDown = false;
@@ -120,11 +156,11 @@ function getMouseClick()
 }
 function getMouseX()
 {
-    return mouseX / getCanvasZoom() + getOffsetX();
+    return mouseX;
 }
 function getMouseY()
 {
-    return mouseY / getCanvasZoom() + getOffsetY();
+    return mouseY;
 }
 
 function getMouseScreenX()
@@ -139,13 +175,11 @@ function getMouseScreenY()
 function getMouseMoveX()
 {
 	var move = mouseX - oldMouseX;
-	move = move * 1/getCanvasZoom();
 	return move;
 }
 function getMouseMoveY()
 {
 	var move = mouseY - oldMouseY;
-	move = move * 1/getCanvasZoom();
 	return move;
 }
 

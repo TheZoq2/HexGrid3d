@@ -7,20 +7,25 @@ var stats;
 var cameraX = 0;
 var cameraZ = 0;
 
+var tileHeight = 2;
+var tileWidth = Math.sqrt(3.0) / 2.0 * tileHeight;
+
 function setup3d()
 {
+	container = document.getElementById("canvasContainer");
+
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 	
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
+	container.appendChild( renderer.domElement );
 
 	//FPS counter
 	stats = new Stats();
 	stats.domElement.style.position = 'absolute';
 	stats.domElement.style.top = '50px';
-	document.body.appendChild( stats.domElement );
+	container.appendChild( stats.domElement );
 
 	//Starting the renderer. The render function will repeat 60 times per second (hopefully)
 	render();
@@ -74,6 +79,7 @@ function load3d()
 
 	loadColada();
 
+	loadBuildings();
 	/*var loader = new THREE.PLYLoader();
 	loader.addEventListener( 'load', function ( event ) {
 
@@ -136,8 +142,6 @@ function createTileObjects()
 			grid[x][z].object = new THREE.Mesh(geometry.clone(), defaultTextureMaterial);
 
 			//Calculating the postion of the hexes
-			var tileHeight = 2;
-			var tileWidth = Math.sqrt(3.0) / 2.0 * tileHeight;
 
 			var xOffset = 0;
 			//Calculating the offset on the x axis
@@ -154,9 +158,7 @@ function createTileObjects()
 			//grid[x][z].object.position.y = 1;
 			grid[x][z].object.rotation.x = -Math.PI;
 			grid[x][z].object.rotation.y = Math.PI / 2;
-			scene.add(grid[x][z].object);
-
-			
+			scene.add(grid[x][z].object);			
 		}
 	}
 
@@ -233,6 +235,80 @@ function loadColada()
 		//Then use that to store the object
 		objects[IDBeingLoaded] = groundObject;
 	} );
+}
+
+function loadBuildings()
+{
+	for(var i = 0; i < buildingData.length; i++)
+	{
+		loadBuilding(buildingData[i].objectPath, i);
+	}
+}
+
+function loadBuilding(fileame, index) //Loads the model with the filename and inserts it into the buidlingData array
+{
+	var loader = new THREE.ColladaLoader();
+	loader.options.convertUpAxis = true;
+	loader.load( buildingData[index].objectPath, function ( collada ) {
+
+		var dae = collada.scene;
+		skin = collada.skins[ 0 ];
+
+		dae.scale.x = dae.scale.y = dae.scale.z = 1;
+		dae.updateMatrix();
+
+		buildingData[index].object  = dae;
+		buildingData[index].object.scale.x = buildingData[index].scaleX;
+		buildingData[index].object.scale.y = buildingData[index].scaleY;
+		buildingData[index].object.scale.z = buildingData[index].scaleZ;
+	} );
+}
+
+function setGroupMaterial(object, material) //Set the material of a group (which is what is loaded with the collada loader)
+{
+	object.material = material;
+	for(var i = 0; i < object.children.length; i++)
+	{
+		object.children[i].material = material.clone();
+		for(var n = 0; n < object.children[i].children.length; n++)
+		{
+			object.children[i].children[n].material = material.clone();
+		}
+	}
+}
+
+var cursorObject = 0;
+var cursorLight = 0;
+function setCursorObject(object)
+{
+	scene.remove(cursorObject);
+	cursorObject = object;
+	scene.add(cursorObject);
+	cursorObject.position.x = 0;
+	cursorObject.position.y = 0;
+	cursorObject.position.z = 0;
+
+	cursorLight = new THREE.PointLight( 0xFFFFFF, 2, 50 );
+	cursorLight.position.x = 1;
+	cursorLight.position.y = 1;
+	cursorLight.position.z = 1;
+	scene.add(cursorLight);
+
+	material = new THREE.MeshBasicMaterial({color: 0x00ff00, ambient: 0x444444})
+	setGroupMaterial(cursorObject, material);
+}
+function setCursorObjectPos(x, y, z)
+{
+	if(cursorObject != 0)
+	{
+		cursorObject.position.x = x;
+		cursorObject.position.y = y;
+		cursorObject.position.z = z;
+
+		cursorLight.position.x = x;
+		cursorLight.position.y = y;
+		cursorLight.position.z = z;	
+	}
 }
 
 function screenTo3d(x, y, yPlane)
