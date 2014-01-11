@@ -31,6 +31,33 @@
 		private $y;
 	}
 
+	class Unit
+	{
+		public function __construct($type, $x, $z)
+		{
+			$this->type = $type;
+			$this->x = $x;
+			$this->z = $z;
+		}
+
+		public function getType()
+		{
+			return $this->type;
+		}
+		public function getX()
+		{
+			return $this->x;
+		}
+		public function getZ()
+		{
+			return $this->z;
+		}
+
+		private $type;
+		private $x;
+		private $z;
+	}
+
 	session_start();
 
 	updateLastAcitivity();
@@ -77,17 +104,6 @@
 			returnResourceData();
 			exit();
 		}
-		/*if($_POST["type"] == "r_buildBuilding"); //Creating a new building
-		{
-			$posX = intval($_POST["posX"]);
-			$posY = intval($_POST["posY"]);
-			$type = intval($_POST["type"]);
-
-			createBuilding($posX, $posY, $type);
-
-			//Exit the PHP file
-			exit();
-		}*/
 		if($_POST["type"] == "r_endTurn")
 		{
 			handleEndTurnRequest();
@@ -129,9 +145,24 @@
 		$dbo = getDBO("map");
 
 		//Creating an SQL request
-		$sqlRequest = "INSERT INTO `buildings`(`id`, `posX`, `posY`, `type`) VALUES ('','" . $posX . "','" . $posY . "','" . $type . "')";
-
+		$sqlRequest = "INSERT INTO `buildings`(`id`, `posX`, `posY`, `type`) VALUES ('',:posX,:posY,:type)";
 		$stmt = $dbo->prepare($sqlRequest);
+		$stmt->bindParam(":posX", $posX);
+		$stmt->bindParam(":posY", $posY);
+		$stmt->bindParam(":type", $type);
+		$stmt->execute();
+	}
+	function createUnit($posX, $posY, $type, $health)
+	{
+		require_once("connect.php");
+
+		$dbo = getDBO("map");
+		$sqlRequest = "INSERT INTO `units`(`type`, `x`, `z`, `health`) VALUES (:type;:posX,:posY,:health)";
+		$stmt = $dbo->prepare($sqlRequest);
+		$stmt->bindParam(":type", $type);
+		$stmt->bindParam(":posX", $posX);
+		$stmt->bindParam(":posY", $posY);
+		$stmt->bindParam(":health", $health);
 		$stmt->execute();
 	}
 
@@ -361,6 +392,62 @@
 			$stmt->execute();
 		}
 
+
+		//handeling units
+		$unitStr = $_POST["createUnits"];
+		$unitStrings = explode("|", $unitStr);
+		$newUnits = array();
+
+		foreach($unitStrings as $thisStr)
+		{
+			//splitting the string into the data
+			$dataStrings = explode(",", $thisStr);
+
+			//Variables to store the data in
+			$uType = -1;
+			$uX = 5;
+			$uZ = 5;
+
+			foreach($dataStrings as $data)
+			{
+				//Spliting the string into datatype and value
+				$dataArray = explode("=", $data);
+				//Checking what kind of data this is
+				$dataType = $dataArray[0];
+				switch ($dataType) {
+					case 'type':
+						$uType = intval( $dataArray[1] );
+
+						break;
+					case 'xPos':
+						$uX = intval($dataArray[1]);
+						break;
+					case 'zPos':
+						$uZ = intval($dataArray[1]);
+						break;
+					default:
+						# code...
+						break;
+				}
+			}
+
+			if($uType != -1)
+			{
+				echo ("uType " . $uType);
+				$newUnits[count($newUnits)] = new Unit($uType, $uX, $uZ);
+			}
+		}
+		//Adding the new units to the database
+		foreach($newUnits as $unit)
+		{
+			require_once("map.php"); //For the data
+			require_once("functions.php"); //For exploring
+
+			require_once("connect.php"); //To connect to the databse
+
+			exploreAround($unit->getX(), $unit->getZ(), $unitData[$unit->getType()]->getSightRange());
+		}
+
 		selectNextPlayer();
 	}
 
@@ -456,7 +543,24 @@
 	{
 		require_once("connect.php");
 
+		//Getting the information about the player
 		$dbo = getDBO("map");
+		$infoSQL = "SELECT * FROM `players` WHERE `Name`=:name";
+		$infoStmt = $dbo->prepare($infoSQL);
+		$infoStmt->bindParam(":name", $name);
+		$infoStmt->execute();
+		$info = $infoStmt->fetch();
+
+		//Saving that information in the 'oldPlayers' table
+		$saveSQL = "INSERT INTO `oldplayers`(`Name`, `oil`, `crystal`, `metal`, `food`) VALUES (:name, :oil, :crystal, :metal, :food)";
+		$saveStmt = $dbo->prepare($saveSQL);
+		$saveStmt->bindParam(":name", $name);
+		$saveStmt->bindParam(":oil", $info["oil"]);
+		$saveStmt->bindParam(":crystal", $info["crystal"]);
+		$saveStmt->bindParam(":metal", $info["metal"]);
+		$saveStmt->bindParam(":food", $info["food"]);
+		$saveStmt->execute();
+
 		$sqlRequest = "DELETE FROM `players` WHERE `Name`=:name";
 		$stmt = $dbo->prepare($sqlRequest);
 		$stmt->bindParam(":name", $name);

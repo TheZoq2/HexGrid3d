@@ -5,6 +5,74 @@ var borderSprite;
 
 var turnBuildings = Array(); //Buildings to be constructed this turn
 
+var unitBase = Array();
+var units = Array();
+var turnUnits = Array();
+
+function unitBaseProt(objName, speed, moverange)
+{
+	this.objName = objName,
+	this.object = 0;
+	this.material = 0;
+
+	this.speed = 0;
+	this.moverange = 0;
+
+	this.scaleX = 0.3;
+	this.scaleY = 0.3;
+	this.scaleZ = 0.3;
+
+	//functions
+	this.loadObject = function(storeID) //ID is the ID of this object and is used for storing the object when it has been loaded
+	{
+		var objName = this.objName;
+
+		var scaleX = this.scaleX;
+		var scaleY = this.scaleY;
+		var scaleZ = this.scaleZ;
+
+		var ID = storeID;
+		var loader = new THREE.ColladaLoader();
+		loader.options.convertUpAxis = true;
+		loader.load( objName, function ( collada ) {
+
+			var dae = collada.scene;
+			skin = collada.skins[ 0 ];
+
+			dae.scale.x = scaleX;
+			dae.scale.y = scaleY;
+			dae.scale.z = scaleZ;
+			dae.updateMatrix();
+
+			//Storing the object
+			unitBase[ID].setObject(dae);
+		} );
+	}
+	this.setObject = function(object)
+	{
+		this.object = object;
+	}
+}
+function unitProt(type, tileX, tileZ)
+{
+	this.type = type;
+	this.object = unitBase[type].object.clone();
+	this.tileX = tileX;
+	this.tileY = 0;
+	this.tileZ = tileZ;
+
+	this.x = coordFromHexX(tileX, tileZ);
+	this.y = 0;
+	this.z = coordFromHexY(tileX, tileZ);
+
+	this.object.position.x = this.x;
+	this.object.position.y = this.y;
+	this.object.position.z = this.z;
+
+	//Adding the object
+	scene.add(this.object);
+}
+
 var tileSprites = Array();
 var tileData = Array();
 
@@ -32,7 +100,7 @@ function setupHex()
 {
 	//loadSprites();
 
-	setGridSize(25, 25);
+	setGridSize(50, 50);
 
 	for(var y = 0; y < grid.length; y++)
 	{
@@ -89,7 +157,7 @@ function setupData()
 		oilCost: 200,
 		foodCost: 200,
 		metalCost: 550,
-		crystalCost: 350,
+		crystalCost: 200,
 
 		sightRange: 2,
 
@@ -134,6 +202,9 @@ function setupData()
 		image: "img/GroundCrystal.png",
 		material: 0
 	};
+
+	unitBase[0] = new unitBaseProt("3d/Mech.dae", 0.2, 2);
+	unitBase[0].loadObject(0);
 }
 
 function loadSprites()
@@ -279,6 +350,39 @@ function drawBuildings()
 	}
 }
 
+function updateTileObjects()
+{
+	for(var x = 0; x < grid.length; x++)
+	{
+		for(var y = 0; y < grid[x].length; y++)
+		{
+			if(grid[x][y].visible == 0)
+			{
+				hideObject(grid[x][y].object);
+			}
+			else
+			{
+				showObject(grid[x][y].object);
+			}
+		}
+	}
+}
+function updateBuildingObjects() //Called when new data about the buildings has been recieved
+{
+	//Hiding/showing buildings
+	for(var i = 0; i < buildings.length; i++)
+	{
+		if(grid[buildings[i].x][buildings[i].y].visible != 0)
+		{
+			showObject(buildings[i].object);
+		}
+		else
+		{
+			hideObject(buildings[i].object);
+		}
+	}
+}
+
 function addTurnBuilding(type, x, y)
 {
 	var canBePlaced = true;
@@ -383,6 +487,21 @@ function canAffordBuilding(buildingID)
 	return result;
 
 }
+
+function addTurnUnit(type, x, z)
+{
+	turnUnits[turnUnits.length] = new unitProt(type, x, z);
+}
+function clearTurnUnits()
+{
+	for(var i = 0; i < turnUnits.length; i++)
+	{
+		scene.remove(turnUnits[i].object);
+	}
+
+	turnUnits = Array();
+}
+
 function getTurnBuildingAmount()
 {
 	return turnBuildings.length;

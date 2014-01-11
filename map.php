@@ -74,6 +74,20 @@
 			$this->sightRange = $sightRange;
 		}
 	}
+	class UnitBase
+	{
+		private $sightRange;
+
+		function __construct($sight, $health, $oil, $food, $metal, $crystal)
+		{
+			$this->sightRange = $sight;
+		}
+
+		function getSightRange()
+		{
+			return $this->sightRange;
+		}
+	}
 
 	$buildings = array();
 
@@ -88,6 +102,10 @@
 
 	$buildingData[3] = new BuildingBase(300, 250, 300, 0);
 	$buildingData[3]->setSightRange(2);
+
+	$unitData = array();
+
+	$unitData[0] = new UnitBase(2, 100, 0, 0, 0, 0);
 
 	if(isset($_SESSION["explored"]) == false)
 	{

@@ -18,16 +18,6 @@ function setup()
 
 	load3d(); //3d.js
 
-    //Starting input handeling
-    //document.onkeydown = keyPressed;
-    //document.onkeyup = keyReleased;
-
-    //canvas.addEventListener("mousedown", doMouseDown, false);
-    //canvas.addEventListener("mouseup", doMouseUp, false);
-    //Supporting scroll wheel
-    //document.addEventListener('DOMMouseScroll', onScroll, false)
-    //document.onmousewheel = onScroll; //Yeay for browsers!!!
-
     //Starting the main game loop
     setInterval(function(){mainLoop()}, 1000/60);
 }

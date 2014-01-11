@@ -6,25 +6,6 @@ xMax = 1280;
 yMax = 720;
 
 function startDrawCanvas(){
-    //Must be done before anything else
-    /*if(canLoaded == false){
-        createCanvas();
-        
-        clearColor = "#000000"
-        drawColor = "#00FF00"
-        
-        canLoaded = true;
-    }*/
-    
-    //Adapting the width and height
-    /*
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    xMax = canvas.width;
-    yMax = canvas.height;
-    */
-    
     setInterval(function(){drawCanvas()}, 1000/60);
 
     setupHex();

@@ -4,8 +4,8 @@ var renderer;
 
 var stats;
 
-var cameraX = 0;
-var cameraZ = 0;
+var cameraX = 1;
+var cameraZ = 1;
 
 var tileHeight = 2;
 var tileWidth = Math.sqrt(3.0) / 2.0 * tileHeight;
@@ -42,12 +42,6 @@ var groundObject;
 
 function load3d()
 {
-	/*var whiteMaterial = new THREE.MeshBasicMaterial( {color: 0xffffff});
-	var whiteGemoetry = new THREE.PlaneGeometry( 100, 100 );
-	var whitePlane = new THREE.Mesh( whiteGemoetry, whiteMaterial);
-	whitePlane.position.y = -5;
-	whitePlane.rotation.x = -Math.PI / 2;
-	scene.add(whitePlane);*/
 
 //Loading objects
 	var manager = new THREE.LoadingManager();
@@ -57,52 +51,11 @@ function load3d()
 
 	};
 
-/*
-	var groundObject;
-	var loader = new THREE.OBJLoader( manager );
-	loader.load( '3d/Hexagon.obj', function ( object ) {
-
-		object.traverse( function ( child ) {
-
-			if ( child instanceof THREE.Mesh ) {
-
-				child.material.map = texture;
-
-			}
-
-		} );
-
-		groundObject = object;
-	} );
-*/
-	//defaultTextureMaterial = new THREE.MeshBasicMaterial( {color: 0x00ffff} );
-
 	loadColada();
 
 	loadBuildings();
-	/*var loader = new THREE.PLYLoader();
-	loader.addEventListener( 'load', function ( event ) {
 
-		var geometry = event.content;
-		var mesh = new THREE.Mesh( geometry, defaultTextureMaterial );
-
-		//mesh.position.set( 0, - 0.25, 0 );
-		//mesh.rotation.set( 0, - Math.PI / 2, 0 );
-		mesh.scale.set( 0.001, 0.001, 0.001 );
-
-		mesh.castShadow = true;
-		mesh.receiveShadow = true;
-
-		groundObject = mesh;
-
-		groundObject.position.x = 5;
-		groundObject.position.y = 2;
-		//scene.add(groundObject);
-		//Running the function to set the objects for the tiles
-		createTileObjects();
-	} );
-
-	loader.load("3d/Hexagon.ply");*/
+	//loader.load("3d/Hexagon.ply");
 
 	//Creating a default material that is big enough to allow tiles to use tectures
 	var texture = THREE.ImageUtils.loadTexture("img/Ground.png");
@@ -266,15 +219,96 @@ function loadBuilding(fileame, index) //Loads the model with the filename and in
 
 function setGroupMaterial(object, material) //Set the material of a group (which is what is loaded with the collada loader)
 {
-	object.material = material;
-	for(var i = 0; i < object.children.length; i++)
+	if(object)
 	{
-		object.children[i].material = material.clone();
-		for(var n = 0; n < object.children[i].children.length; n++)
+		var children = getObjectChildren(object);
+
+		for(var i = 0; i < children.length; i++)
 		{
-			object.children[i].children[n].material = material.clone();
+			children[i].material = material;
 		}
 	}
+}
+function hideObject(object)
+{
+	if(object)
+	{
+		var children = getObjectChildren(object);
+
+		for(var i = 0; i < children.length; i++)
+		{
+			children[i].visible = false;
+		}
+	}
+	
+	/*children[0] = object;
+
+	//While there are children that have not been handeled
+	while(children.length != 0)
+	{
+		//Adding all the childs children to the array
+		for(var i = 0; i < children[0].children.length; i++)
+		{
+			children[children.length] = children[0].children;
+		}
+
+		//Hiding the child
+		children[0].visible = false;
+		//Removing the current child
+		children.splice(0, 1);
+	}*/
+}
+function showObject(object)
+{
+	var children = getObjectChildren(object);
+
+	for(var i = 0; i < children.length; i++)
+	{
+		children[i].visible = true;
+	}
+	/*var children = Array();
+	
+	children[0] = object;
+
+	//While there are children that have not been handeled
+	while(children.length != 0)
+	{
+		//Adding all the childs children to the array
+		for(var i = 0; i < children[0].children.length; i++)
+		{
+			children[children.length] = children[0].children;
+		}
+
+		//Hiding the child
+		children[0].visible = true;
+		//Removing the current child
+		children.splice(0, 1);
+	}*/
+}
+
+function getObjectChildren(object)
+{
+	var result = Array();
+
+	var children = Array();
+	children[0] = object;
+
+	//Looking thru all current children
+	while(children.length != 0)
+	{
+		//Adding this childs children
+		for(var i = 0; i < children[0].children.length; i++)
+		{
+			children[children.length] = children[0].children[i];
+		}
+
+		result[result.length] = children[0];
+
+		//Removing this one
+		children.splice(0, 1);
+	}
+
+	return result;
 }
 
 var cursorObject = 0;
@@ -288,12 +322,6 @@ function setCursorObject(object)
 	cursorObject.position.y = 0;
 	cursorObject.position.z = 0;
 
-	cursorLight = new THREE.PointLight( 0xFFFFFF, 2, 50 );
-	cursorLight.position.x = 1;
-	cursorLight.position.y = 1;
-	cursorLight.position.z = 1;
-	scene.add(cursorLight);
-
 	material = new THREE.MeshBasicMaterial({color: 0x00ff00, ambient: 0x444444})
 	setGroupMaterial(cursorObject, material);
 }
@@ -304,10 +332,6 @@ function setCursorObjectPos(x, y, z)
 		cursorObject.position.x = x;
 		cursorObject.position.y = y;
 		cursorObject.position.z = z;
-
-		cursorLight.position.x = x;
-		cursorLight.position.y = y;
-		cursorLight.position.z = z;	
 	}
 }
 

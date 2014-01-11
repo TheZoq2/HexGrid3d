@@ -3,33 +3,48 @@ var b_endTurn;
 
 function setupUI()
 {
-	bar_right = document.getElementById("UI_rightBar");
 	//Getting HTML UI elements
+	bar_right = document.getElementById("UI_rightBar");
+	buildingGroup = document.getElementById("UI_buildingButtons");
+	unitGroup = document.getElementById("UI_unitButtons");
+
 	b_endTurn = document.getElementById("UI_b_endTurn");
 
 	//Giving those elements function
 	b_endTurn.onclick = endTurn;
 
 	var buildingAmount = 4;
-	//Creating building buttons
-	for(var i = 0; i < buildingAmount; i++)
+
+	for(var i = 0; i < buildingData.length; i++)
 	{
-		button = document.createElement("div");
+		var button = document.createElement("div");
 		button.setAttribute("class", "UI_buildingButton");
-		button.setAttribute("ID", "buildnig_" + i);
 
-		button.onclick = function(){
+		var index = i; //To keep the ID inside the onclick function
+		button.onclick = function()
+		{
 			selTool = 1;
-			selID = 0;
+			selID = index;
+		}
 
-			//Getting the ID of the building that that is referenced in the ID of the button
-			var IDname = this.id;
-			//Spliting the ID
-			selID = parseInt(IDname.split("_")[1]);
-		};
-
-		bar_right.appendChild(button);
+		buildingGroup.appendChild(button);
 	}
+
+	for(var i = 0; i < unitBase.length; i++)
+	{
+		var button = document.createElement("div");
+		button.setAttribute("class", "UI_buildingButton");
+
+		var index = i;
+		button.onclick = function()
+		{
+			selTool = 2;
+			selID = index;
+		}
+
+		unitGroup.appendChild(button);
+	}
+	/**/
 }
 
 function hideUI()

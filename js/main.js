@@ -37,22 +37,6 @@ function mainLoop()
 		//if a building is selected
 		if(selTool == 1)
 		{
-			/*drawTextToScreen("Current selected: " + selID, 20, 20);	
-			//Getting the current cordinates
-			var xHex = hexFromCordX(getMouseX(), getMouseY());
-			var yHex = hexFromCordY(getMouseX(), getMouseY());
-			var xCoord = coordFromHexX(xHex, yHex);
-			var yCoord = coordFromHexY(xHex, yHex);
-			drawTextToScreen("xCoord: " + xCoord, 20, 40);
-			//Placing a building ghost at the cordinates
-			setSpritePosition(buildingData[selID].SID, xCoord, yCoord);
-			drawSprite(buildingData[selID].SID);
-
-			//Checking if the player wants to place the building
-			if(getMouseClick() == 1)
-			{
-				addTurnBuilding(selID, xHex, yHex);
-			}*/
 			var tileX = hexFromCordX(mouseX3d, mouseZ3d);
 			var tileZ = hexFromCordY(mouseX3d, mouseZ3d);
 			var posX = coordFromHexX(tileX, tileZ);
@@ -71,6 +55,33 @@ function mainLoop()
 			}
 
 			lastID = selID;
+		}
+
+		//If a unit is selected
+		if(selTool == 2)
+		{
+			var tileX = hexFromCordX(mouseX3d, mouseZ3d);
+			var tileZ = hexFromCordY(mouseX3d, mouseZ3d);
+			var posX = coordFromHexX(tileX, tileZ);
+			var posZ = coordFromHexY(tileX, tileZ);
+
+			if(cursorObject == 0 || lastID != selID)
+			{
+				setCursorObject(unitBase[selID].object);
+			}
+			setCursorObjectPos(posX, 0, posZ);
+
+			if(mouseClick == true)
+			{
+				addTurnUnit(selID, tileX, tileZ);
+			}
+		}
+
+		if(totalTime > lastUpdateRequest + requestInterval)
+		{
+			createRequest("requests.php", "type=r_ping", function(){}); //Sending a request to let the server know that the player is still online
+
+			lastUpdateRequest = totalTime;
 		}
 	}
 	if(gameState == 2) //waiting for turn
@@ -170,6 +181,8 @@ function handleMapData(data) //Takes care of map data that is returned from the 
 			}
 		}
 	}
+
+	updateTileObjects();
 }
 
 function handleBuildingData(data)
@@ -225,6 +238,8 @@ function handleBuildingData(data)
 			scene.add(buildings[i].object); 
 		}
 	}
+
+	updateBuildingObjects();
 }
 
 function handleResourceData(data)
@@ -263,7 +278,6 @@ function handleResourceData(data)
 }
 function onTurnUpdate(data) //Function to run when a response from an update request has been sent
 {
-	console.log(data);
 	if(data == "waitingForOthers") //If it is not the clients turn
 	{
 
@@ -288,8 +302,19 @@ function endTurn() //This function is run when the user ends the tiurn
 		endTurnRequest += "xPos=" + turnBuilding.x + ",";
 		endTurnRequest += "yPos=" + turnBuilding.y;
 
-		endTurnRequest += "|"
+		endTurnRequest += "|";
 	}
+
+	endTurnRequest += "&createUnits=";
+	for(var i = 0; i < turnUnits.length; i++)
+	{
+		endTurnRequest += "type=" + turnUnits[i].type + ",";
+		endTurnRequest += "xPos=" + turnUnits[i].tileX + ",";
+		endTurnRequest += "zPos=" + turnUnits[i].tileZ + ",";
+
+		endTurnRequest += "|";
+	}
+	console.log(endTurnRequest);
 
 	//Sending that data
 	endRequest = createRequest("requests.php", endTurnRequest, function(response){
@@ -306,6 +331,8 @@ function endTurn() //This function is run when the user ends the tiurn
 	}
 
 	turnBuildings = Array();
+
+	clearTurnUnits();
 
 	gameState = 2;
 }

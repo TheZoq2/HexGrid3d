@@ -1,20 +1,20 @@
 <?php
     require_once("map.php");
 
-    //generateMap(100, 100);
+    //generateMap(50, 50);
 
     //Checking if the client has a player
     session_start();
-
-    //unset($_SESSION["explored"]);
-
-    require_once("functions.php");
 
     if(isset($_SESSION["Player"]) == false)
     {
         //Go to registration
         header('Location:player.php');
     }
+
+    //unset($_SESSION["explored"]);
+
+    require_once("functions.php");
 ?>
 
 <!DOCTYPE html>
@@ -26,10 +26,6 @@
         <link rel="stylesheet" href="css/html5reset-1.6.1.css"/>
         <link rel="stylesheet" href="css/style.css"/>
         <link rel="stylesheet" href="css/game.css"/>
-        <!--<script src="js/canvas/canvas.js"></script>
-        <script src="js/canvas/drawing.js"></script>
-        <script src="js/canvas/particleEffect.js"></script>
-        <script src="js/canvas/images.js"></script>-->
         <script src="js/canvas/input.js"></script>
         <script src="js/3d.js"></script>
         <script src="js/setup.js"></script>
@@ -48,7 +44,6 @@
         <script src="js/3d/FPSCounter.js"></script>
     </head>
     <body>
-        <!--Including Three.js-->
 
         <div id="UI_resources">
             <div class="UI_resource"> 
@@ -66,6 +61,10 @@
         </div>
 
         <div id="UI_rightBar">
+            <p>Buildings</p>
+            <div id="UI_buildingButtons"></div>
+            <p>Units</p>
+            <div id="UI_unitButtons"></div>
         </div>
         <div id="UI_controlBar">
             <a id="UI_b_endTurn" href="#">

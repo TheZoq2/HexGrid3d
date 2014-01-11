@@ -12,20 +12,6 @@ var mouseFrameY
 var oldMouseX = 0;
 var oldMouseY = 0;
 
-/*function mouseMove(e)
-{
-    var mouseX, mouseY;
-
-    if(e.offsetX) {
-        mouseX = e.offsetX;
-        mouseY = e.offsetY;
-    }
-    else if(e.layerX) {
-        mouseX = e.layerX;
-        mouseY = e.layerY;
-    }
-}*/
-
 var mouseHoldTime = 200;
 var mouseDown = false;
 var mouseHeld = false;
@@ -38,9 +24,9 @@ var releaseTime;
 var clickX;
 var clickY;
 
-var lookingAtX = 0;
-var lookingAtZ = 0;
-var cameraHeight = 1;
+var lookingAtX = 5;
+var lookingAtZ = 5;
+var cameraHeight = 10;
 
 function updateInput() //Call this to get all mouse hold features working
 {
