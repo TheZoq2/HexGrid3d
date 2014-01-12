@@ -10,16 +10,31 @@ var cameraZ = 1;
 var tileHeight = 2;
 var tileWidth = Math.sqrt(3.0) / 2.0 * tileHeight;
 
+var skylight;
+
 function setup3d()
 {
 	container = document.getElementById("canvasContainer");
 
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 500 );
 	
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.appendChild( renderer.domElement );
+
+	//Enabeling shadows
+	renderer.shadowMapEnabled = true;
+	renderer.shadowMapSoft = false;
+
+	renderer.shadowCameraNear = 0.01;
+	renderer.shadowCameraFar = camera.far;
+	renderer.shadowCameraFov = 50;
+
+	renderer.shadowMapBias = 0.0039;
+	renderer.shadowMapDarkness = 1.0;
+	renderer.shadowMapWidth = 4096;
+	renderer.shadowMapHeight = 4096;
 
 	//FPS counter
 	stats = new Stats();
@@ -35,6 +50,25 @@ function setup3d()
 	camera.position.y = 3;
 	camera.rotation.x = -Math.PI / 3;
 	//camera.rotation.y = Math.PI;
+
+	skylight = new THREE.DirectionalLight(0xffffff, 2);
+	skylight.position.set(35, 12, 25);
+	skylight.target.position.set(25, 0, 10);
+
+	skylight.castShadow = true;
+	skylight.shadowMapSoft = true;
+	skylight.shadowDarkness = 0.8;
+	skylight.shadowCameraNear = 1;
+	skylight.shadowCameraFar = 50;
+	skylight.shadowCameraLeft = -25;
+	skylight.shadowCameraRight = 25;
+	skylight.shadowCameraTop = 25;
+	skylight.shadowCameraBottom = -12;
+	//skylight.shadowCameraVisible = true;
+
+	skylight.shadowMapWidth = 2048;
+	skylight.shadowMapHeight = 2048;
+	scene.add(skylight);
 }
 
 var defaultTextureMaterial;
@@ -62,7 +96,7 @@ function load3d()
 	texture.wrapS = THREE.RepeatWrapping;
 	texture.wrapT = THREE.RepeatWrapping;
 	texture.repeat.set(1, 1);
-	defaultTextureMaterial = new THREE.MeshBasicMaterial( {map: texture} );
+	defaultTextureMaterial = new THREE.MeshPhongMaterial( {map: texture} );
 
 	//Creating materials
 	for(var i = 0; i < tileData.length; i++)
@@ -71,7 +105,7 @@ function load3d()
 		texture.wrapS = THREE.RepeatWrapping;
 		texture.wrapT = THREE.RepeatWrapping;
 		texture.repeat.set(1, 1);
-		tileData[i].material = new THREE.MeshBasicMaterial( {map: texture} );
+		tileData[i].material = new THREE.MeshPhongMaterial( {map: texture} );
 	}
 
 	render();
@@ -111,7 +145,8 @@ function createTileObjects()
 			//grid[x][z].object.position.y = 1;
 			grid[x][z].object.rotation.x = -Math.PI;
 			grid[x][z].object.rotation.y = Math.PI / 2;
-			scene.add(grid[x][z].object);			
+
+			scene.add(grid[x][z].object);
 		}
 	}
 
@@ -121,6 +156,7 @@ function createTileObjects()
 function setGroundMaterial(posX, posY)
 {
 	grid[posX][posY].object.material = tileData[grid[posX][posY].type].material;
+	grid[posX][posY].object.receiveShadow = true;
 }
 
 function render()
@@ -214,6 +250,13 @@ function loadBuilding(fileame, index) //Loads the model with the filename and in
 		buildingData[index].object.scale.x = buildingData[index].scaleX;
 		buildingData[index].object.scale.y = buildingData[index].scaleY;
 		buildingData[index].object.scale.z = buildingData[index].scaleZ;
+
+		children = getObjectChildren(buildingData[index].object);
+		for(var i = 0; i < children.length; i++)
+		{
+			children[i].castShadow = true;
+			children[i].receiveShadow = true;
+		}
 	} );
 }
 
@@ -240,23 +283,6 @@ function hideObject(object)
 			children[i].visible = false;
 		}
 	}
-	
-	/*children[0] = object;
-
-	//While there are children that have not been handeled
-	while(children.length != 0)
-	{
-		//Adding all the childs children to the array
-		for(var i = 0; i < children[0].children.length; i++)
-		{
-			children[children.length] = children[0].children;
-		}
-
-		//Hiding the child
-		children[0].visible = false;
-		//Removing the current child
-		children.splice(0, 1);
-	}*/
 }
 function showObject(object)
 {
@@ -266,24 +292,6 @@ function showObject(object)
 	{
 		children[i].visible = true;
 	}
-	/*var children = Array();
-	
-	children[0] = object;
-
-	//While there are children that have not been handeled
-	while(children.length != 0)
-	{
-		//Adding all the childs children to the array
-		for(var i = 0; i < children[0].children.length; i++)
-		{
-			children[children.length] = children[0].children;
-		}
-
-		//Hiding the child
-		children[0].visible = true;
-		//Removing the current child
-		children.splice(0, 1);
-	}*/
 }
 
 function getObjectChildren(object)
@@ -322,7 +330,7 @@ function setCursorObject(object)
 	cursorObject.position.y = 0;
 	cursorObject.position.z = 0;
 
-	material = new THREE.MeshBasicMaterial({color: 0x00ff00, ambient: 0x444444})
+	material = new THREE.MeshPhongMaterial({color: 0x00ff00, ambient: 0x444444})
 	setGroupMaterial(cursorObject, material);
 }
 function setCursorObjectPos(x, y, z)

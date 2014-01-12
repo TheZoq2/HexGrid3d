@@ -52,10 +52,15 @@
 		{
 			return $this->z;
 		}
+		public function getHealth()
+		{
+			return $this->health;
+		}
 
 		private $type;
 		private $x;
 		private $z;
+		private $health;
 	}
 
 	session_start();
@@ -117,6 +122,10 @@
 
 			unset($_SESSION["Player"]);
 
+			exit();
+		}
+		if($_POST["type"] == "r_unitData")
+		{
 			exit();
 		}
 	}
@@ -445,7 +454,25 @@
 
 			require_once("connect.php"); //To connect to the databse
 
+			$dbo = getDBO("map");
+
 			exploreAround($unit->getX(), $unit->getZ(), $unitData[$unit->getType()]->getSightRange());
+
+			$type = $unit->getType();
+			$x = $unit->getX();
+			$z = $unit->getZ();
+			$health = $unit->getHealth();
+
+			//addind the unit to the database
+			$sqlRequest = "INSERT INTO `units`(`type`, `x`, `z`, `health`, `owner`) VALUES (:type, :x, :z, :health, :owner)";
+			$sqlRequest = "INSERT INTO `units`(`type`, `x`, `z`, `health`, `owner`) VALUES (:type, :x, :z, 0, :owner)";
+			$stmt = $dbo->prepare($sqlRequest);
+			$stmt->bindParam(":type", $type);
+			$stmt->bindParam(":x", $x);
+			$stmt->bindParam(":z", $z);
+			//$stmt->bindParam(":health", $health);
+			$stmt->bindParam(":owner", $_SESSION["Player"]);
+			$stmt->execute();
 		}
 
 		selectNextPlayer();

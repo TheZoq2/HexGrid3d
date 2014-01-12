@@ -75,7 +75,7 @@
 						$stmt->bindParam(":metal", $startMetal);
 						$stmt->bindParam(":food", $startFood);
 						$stmt->bindParam(":lastActive", $time);
-						$stmt->execute();	
+						$stmt->execute();
 					}
 					else
 					{

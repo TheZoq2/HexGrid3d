@@ -20,12 +20,15 @@ function setupUI()
 		var button = document.createElement("div");
 		button.setAttribute("class", "UI_buildingButton");
 
-		var index = i; //To keep the ID inside the onclick function
+		/*var index = i; //To keep the ID inside the onclick function
 		button.onclick = function()
 		{
 			selTool = 1;
-			selID = index;
-		}
+			selID = i;
+
+			console.log(index);
+		}*/
+		button = addClickListener(button, i, 1);
 
 		buildingGroup.appendChild(button);
 	}
@@ -35,16 +38,22 @@ function setupUI()
 		var button = document.createElement("div");
 		button.setAttribute("class", "UI_buildingButton");
 
-		var index = i;
-		button.onclick = function()
-		{
-			selTool = 2;
-			selID = index;
-		}
+		button = addClickListener(button, i, 2);
 
 		unitGroup.appendChild(button);
 	}
 	/**/
+}
+
+function addClickListener(element, newID, newTool) //Needed to get the ID into the onClick function
+{
+	element.onclick = function()
+	{
+		selTool = newTool;
+		selID = newID;
+	}
+
+	return element;
 }
 
 function hideUI()

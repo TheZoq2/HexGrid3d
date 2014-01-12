@@ -11,6 +11,7 @@ var mapUpdateInterval = 5000;
 var selTool = 0;
 var selID = 0;
 var lastID = 0;
+var lastTool;
 
 function mainLoop()
 {
@@ -42,7 +43,7 @@ function mainLoop()
 			var posX = coordFromHexX(tileX, tileZ);
 			var posZ = coordFromHexY(tileX, tileZ);
 
-			if(cursorObject == 0 || lastID != selID)
+			if(cursorObject == 0 || lastID != selID || selTool != lastTool)
 			{
 				setCursorObject(buildingData[selID].object);
 			}
@@ -55,6 +56,7 @@ function mainLoop()
 			}
 
 			lastID = selID;
+			lastTool = selTool;
 		}
 
 		//If a unit is selected
@@ -65,9 +67,9 @@ function mainLoop()
 			var posX = coordFromHexX(tileX, tileZ);
 			var posZ = coordFromHexY(tileX, tileZ);
 
-			if(cursorObject == 0 || lastID != selID)
+			if(cursorObject == 0 || lastID != selID || selTool != lastTool)
 			{
-				setCursorObject(unitBase[selID].object);
+				setCursorObject(unitBase[selID].object.clone());
 			}
 			setCursorObjectPos(posX, 0, posZ);
 
@@ -75,6 +77,9 @@ function mainLoop()
 			{
 				addTurnUnit(selID, tileX, tileZ);
 			}
+
+			lastID = selID;
+			lastTool = selTool;
 		}
 
 		if(totalTime > lastUpdateRequest + requestInterval)
@@ -121,6 +126,11 @@ function requestMap()
 	//Requesting resources
 	createRequest("requests.php", "type=r_resourceData", function(result){
 		handleResourceData(result);
+	});
+
+	//Requesting units
+	createRequest("requests.php", "type=r_unitData", function(result){
+		handleUnitData(result);
 	});
 }
 
@@ -224,9 +234,10 @@ function handleBuildingData(data)
 			object.position.x = coordFromHexX(posX, posY);
 			object.position.z = coordFromHexY(posX, posY);
 
-			material = new THREE.MeshBasicMaterial({color:0x0000ff, ambient: 0x111111});
+			material = new THREE.MeshPhongMaterial({color:0x777777, ambient: 0x111111}); //Phong material for the lights
 
 			setGroupMaterial(object, material);
+
 			//Adding the building to the building array
 			buildings[i] = {
 				x: posX,
@@ -276,6 +287,11 @@ function handleResourceData(data)
 		}
 	}
 }
+function handleUnitData(data)
+{
+
+}
+
 function onTurnUpdate(data) //Function to run when a response from an update request has been sent
 {
 	if(data == "waitingForOthers") //If it is not the clients turn

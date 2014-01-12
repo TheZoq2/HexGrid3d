@@ -87,6 +87,10 @@
 		{
 			return $this->sightRange;
 		}
+		function getHealth()
+		{
+			return 0;
+		}
 	}
 
 	$buildings = array();

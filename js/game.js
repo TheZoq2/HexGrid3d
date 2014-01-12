@@ -44,6 +44,17 @@ function unitBaseProt(objName, speed, moverange)
 			dae.scale.z = scaleZ;
 			dae.updateMatrix();
 
+			var material = new THREE.MeshPhongMaterial({color: 0x777777});
+
+			var children = getObjectChildren(dae)
+			for(var i = 0; i < children.length; i++)
+			{
+				children[i].castShadow = true;
+				children[i].recieveShadow = true;
+
+				children[i].material = material;
+			}
+
 			//Storing the object
 			unitBase[ID].setObject(dae);
 		} );
@@ -68,6 +79,16 @@ function unitProt(type, tileX, tileZ)
 	this.object.position.x = this.x;
 	this.object.position.y = this.y;
 	this.object.position.z = this.z;
+
+	var material = new THREE.MeshPhongMaterial({color: 0x777777});
+
+	var children = getObjectChildren(this.object)
+	for(var i = 0; i < children.length; i++)
+	{
+		children[i].castShadow = true;
+
+		children[i].material = material;
+	}
 
 	//Adding the object
 	scene.add(this.object);
@@ -469,7 +490,7 @@ function addTurnBuilding(type, x, y)
 			type: type,
 			x: x,
 			y: y,
-			object: object
+			object: object,
 		};
 
 		scene.add(turnBuildings[turnBuildings.length-1].object);
