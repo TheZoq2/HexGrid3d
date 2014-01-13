@@ -58,15 +58,16 @@
 					$stmt->bindParam(":name", $playerName);
 					$stmt->execute();
 
-					if(count($result) != 0)
+					$result = $stmt->fetch();
+
+					if($result != false)
 					{
-						print_r($result);
 						$time = time();
 						$startOil = $result["oil"];
 						$startCrystal = $result["crystal"];
 						$startMetal = $result["metal"];
 						$startFood = $result["food"];
-						//The player does not exist already, we can create it
+						
 						$sqlRequest = "INSERT INTO `players`(`ID`, `Name`, `oil`, `crystal`, `metal`, `food`, `lastActive`) VALUES ('',:name,:oil,:crystal,:metal,:food,:lastActive)";
 						$stmt = $dbo->prepare($sqlRequest);
 						$stmt->bindParam(":name", $playerName);
@@ -76,8 +77,14 @@
 						$stmt->bindParam(":food", $startFood);
 						$stmt->bindParam(":lastActive", $time);
 						$stmt->execute();
+
+						//Removing the player from the oldPlayers database
+						$sqlRequest = "DELETE FROM `oldplayers` WHERE `Name`=:name";
+						$stmt = $dbo->prepare($sqlRequest);
+						$stmt->bindParam(":name", $playerName);
+						$stmt->execute();
 					}
-					else
+ 					else
 					{
 						$time = time();
 						$startOil = 2000;
@@ -95,6 +102,8 @@
 						$stmt->bindParam(":lastActive", $time);
 						$stmt->execute();
 					}
+
+					echo("gwgawghwahga");
 
 					$_SESSION["Player"] = $playerName; //Saving the name of the client in the session variable
 				}

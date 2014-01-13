@@ -17,10 +17,15 @@
 	}
 	class BuildingBase
 	{
-		public $food;
-		public $oil;
-		public $metal;
-		public $crystal;
+		private $food;
+		private $oil;
+		private $metal;
+		private $crystal;
+
+		private $foodGain;
+		private $oilGain;
+		private $metalGain;
+		private $crystalGain;
 
 		public $sightRange;
 
@@ -53,6 +58,27 @@
 			return $this->sightRange;
 		}
 
+		public function getFoodGain()
+		{
+			return $this->foodGain;
+		}
+		public function getOilGain()
+		{
+			return $this->oilGain;
+		}
+		public function getMetalGain()
+		{
+			return $this->metalGain;
+		}
+		public function getCrystalGain()
+		{
+			return $this->crystalGain;
+		}
+		public function getSightRangeGain()
+		{
+			return $this->sightRangeGain;
+		}
+
 		public function setFood($food)
 		{
 			$this->food = $food;
@@ -72,6 +98,14 @@
 		public function setSightRange($sightRange)
 		{
 			$this->sightRange = $sightRange;
+		}
+
+		public function setGain($foodGain, $oilGain, $metalGain, $crystalGain)
+		{
+			$this->foodGain = $foodGain;
+			$this->oilGain = $oilGain;
+			$this->metalGain = $metalGain;
+			$this->crystalGain = $crystalGain;
 		}
 	}
 	class UnitBase
@@ -97,12 +131,15 @@
 
 	$buildingData[0] = new BuildingBase(500, 1000, 1000, 50);
 	$buildingData[0]->setSightRange(3);
+	$buildingData[0]->setGain(0, 0, 100, 0);
 
 	$buildingData[1] = new BuildingBase(0, 250, 30, 100);
 	$buildingData[1]->setSightRange(2);
+	$buildingData[1]->setGain(0, 100, 0, 0)
 
 	$buildingData[2] = new BuildingBase(200, 200, 550, 350);
 	$buildingData[2]->setSightRange(2);
+	$buildingData[2]->setGain(100, 0, 0, 0);
 
 	$buildingData[3] = new BuildingBase(300, 250, 300, 0);
 	$buildingData[3]->setSightRange(2);

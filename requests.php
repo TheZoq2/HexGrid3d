@@ -475,6 +475,9 @@
 			$stmt->execute();
 		}
 
+		//Giving the player some money
+		$sqlRequest = "SELECT * FROM `buildings` WHERE `owner`=:name";
+
 		selectNextPlayer();
 	}
 
