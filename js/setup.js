@@ -16,6 +16,13 @@ function setup()
     container.addEventListener("mousedown", doMouseDown, false);
     container.addEventListener("mouseup", doMouseUp, false);
 
+    container.addEventListener('contextmenu', function(e) { //Disable right click
+        if (e.button === 2) {
+            e.preventDefault();
+            return false;
+        }
+    }, false);
+
 	load3d(); //3d.js
 
     //Starting the main game loop

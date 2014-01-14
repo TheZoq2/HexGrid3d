@@ -66,7 +66,12 @@ function unitBaseProt(objName, speed, moverange)
 }
 function unitProt(type, tileX, tileZ)
 {
+	this.id = 0;
 	this.type = type;
+	this.owner = "";
+	this.health = 0;
+	this.path = Array();
+
 	this.object = unitBase[type].object.clone();
 	this.tileX = tileX;
 	this.tileY = 0;
@@ -80,16 +85,38 @@ function unitProt(type, tileX, tileZ)
 	this.object.position.y = this.y;
 	this.object.position.z = this.z;
 
-	var material = new THREE.MeshPhongMaterial({color: 0x777777});
-
-	var children = getObjectChildren(this.object)
-	for(var i = 0; i < children.length; i++)
+	this.setPosition = function(tileX, tileZ)
 	{
-		children[i].castShadow = true;
+		this.tileX = tileX;
+		this.tileY = 0;
+		this.tileZ = tileZ;
 
-		children[i].material = material;
+		this.x = coordFromHexX(tileX, tileZ);
+		this.y = 0;
+		this.z = coordFromHexY(tileX, tileZ);
+
+		this.object.position.x = this.x;
+		this.object.position.y = this.y;
+		this.object.position.z = this.z;
+	}
+	this.setPath = function(path)
+	{
+		this.path = path;
 	}
 
+	this.setMaterial = function(material)
+	{
+		var children = getObjectChildren(this.object)
+		for(var i = 0; i < children.length; i++)
+		{
+			children[i].castShadow = true;
+
+			children[i].material = material;
+		}
+	}
+
+	var material = new THREE.MeshPhongMaterial({color: 0x777777});
+	this.setMaterial(material);
 	//Adding the object
 	scene.add(this.object);
 }
@@ -404,6 +431,52 @@ function updateBuildingObjects() //Called when new data about the buildings has 
 	}
 }
 
+var selUnit = -1; //The unit that is currently selected
+function unitInput()
+{
+	//Checking what tile the user is hovering over
+	var tileX = hexFromCordX(mouseX3d, mouseZ3d);
+	var tileZ = hexFromCordY(mouseX3d, mouseZ3d);
+
+	//Checking if a user is in that tile
+	if(mouseClick == true)
+	{
+		var unitSelected = false;
+		for(var i = 0; i < units.length; i++)
+		{
+			if(units[i].tileX == tileX && units[i].tileZ == tileZ)
+			{
+				unitSelected = true;
+
+				selUnit = i;
+
+				console.log("Selected");
+			}
+		}
+		if(unitSelected == false)
+		{
+			console.log("None selected");
+			selUnit = -1;
+		}
+	}
+
+	if(rightClick == true && selUnit != -1) //Moving the selected unit when the user right clicks
+	{
+		units[selUnit].setPath(findPath(units[selUnit].tileX, units[selUnit].tileZ, tileX, tileZ).length);
+		//units[selUnit].setPosition(tileX, tileZ);
+	}
+}
+function updateUnits()
+{
+	for(var i = 0; i < units.length; i++)
+	{
+		if(units[i].path.length > 0) //If the unit has a path
+		{
+			
+		}
+	}
+}
+
 function addTurnBuilding(type, x, y)
 {
 	var canBePlaced = true;
@@ -608,7 +681,9 @@ function setGridSize(xSize, ySize)
 				material: 0,
 				type: 0,
 
-				visible: 0
+				visible: 0,
+
+				walkable: true
 			};
 		}
 	}

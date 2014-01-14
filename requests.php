@@ -126,6 +126,7 @@
 		}
 		if($_POST["type"] == "r_unitData")
 		{
+			returnUnitData();
 			exit();
 		}
 	}
@@ -298,6 +299,37 @@
 
 		echo $result;
 	}
+	function returnUnitData()
+	{
+		//Connecting to the database to fetch the unit data
+		require_once("connect.php");
+
+		$dbo = getDBO("map");
+
+		$sqlRequest = "SELECT * FROM `units` WHERE 1";
+		$stmt = $dbo->prepare($sqlRequest);
+		$stmt->execute();
+		$units = $stmt->fetchAll();
+
+		//Create a datastring to send back
+		$response = "";
+
+		foreach($units as $unit)
+		{
+			//Adding the unit data
+			$response .= "ID=" . $unit["ID"] . ",";
+			$response .= "type=" . $unit["type"] . ",";
+			$response .= "x=" . $unit["x"] . ",";
+			$response .= "z=" . $unit["z"] . ",";
+			$response .= "health" . $unit["health"] . ",";
+			$response .= "owner" . $unit["owner"];
+
+			$response .= "|";
+		}
+
+		//Returning the string
+		echo $response;
+	}
 
 	function handleEndTurnRequest()
 	{
@@ -353,7 +385,7 @@
 				//Revealing the surrounded area
 				require_once("functions.php");
 
-				require_once("map.php");
+				require_once("data.php");
 
 				exploreAround($bX, $bY, $buildingData[$bType]->getSightRange());
 			}
@@ -367,7 +399,7 @@
 		$sqlRequest = "INSERT INTO `buildings`(`id`, `posX`, `posY`, `type`, `owner`) VALUES ('',:xPos,:yPos,:type,:owner)";
 		$stmt = $dbo->prepare($sqlRequest);
 
-		require_once("map.php");
+		require_once("data.php");
 		$costSql = "UPDATE `players` SET `oil`=:oil,`crystal`=:crystal,`metal`=:metal,`food`=:food WHERE `Name`=:name";
 		$costStmt = $dbo->prepare($costSql);
 		$costStmt->bindParam(":name", $_SESSION["Player"]);
@@ -449,7 +481,7 @@
 		//Adding the new units to the database
 		foreach($newUnits as $unit)
 		{
-			require_once("map.php"); //For the data
+			require_once("data.php"); //For the data
 			require_once("functions.php"); //For exploring
 
 			require_once("connect.php"); //To connect to the databse
@@ -475,8 +507,54 @@
 			$stmt->execute();
 		}
 
+		//This would be a function, but today PHP decided to be special
+		require_once("data.php");
+
+		$dbo = getDBO("map");
 		//Giving the player some money
 		$sqlRequest = "SELECT * FROM `buildings` WHERE `owner`=:name";
+		$stmt = $dbo->prepare($sqlRequest);
+		$stmt->bindParam(":name", $_SESSION["Player"]);
+		$stmt->execute();
+
+		$result = $stmt->fetchAll();
+
+		//getting the player
+		$sqlRequest = "SELECT * FROM `players` WHERE `Name`=:name";
+		$stmt = $dbo->prepare($sqlRequest);
+		$stmt->bindParam(":name", $_SESSION["Player"]);
+		$stmt->execute();
+
+		$player = $stmt->fetch();
+
+		$newOil = $player["oil"];
+		$newMetal = $player["metal"];
+		$newCrystal = $player["crystal"];
+		$newFood = $player["food"];
+
+		foreach ($result as $building) {
+			//Checking the yeild of the building
+			$type = $building["type"];
+
+			if(isset($buildingData[$type]))
+			{
+				$newFood += $buildingData[$type]->getFoodGain();
+				$newOil += $buildingData[$type]->getOilGain();
+				$newMetal += $buildingData[$type]->getMetalGain();
+				$newCrystal += $buildingData[$type]->getCrystalGain();
+			}
+		}
+
+		//All buildings have been checked, update the player resources
+		$sqlRequest = "UPDATE `players` SET `oil`=:oil,`crystal`=:crystal,`metal`=:metal,`food`=:food WHERE `Name`=:name";
+		$stmt = $dbo->prepare($sqlRequest);
+		$stmt->bindParam(":oil", $newOil);
+		$stmt->bindParam(":crystal", $newCrystal);
+		$stmt->bindParam(":metal", $newMetal);
+		$stmt->bindParam(":food", $newFood);
+		$stmt->bindParam(":name", $_SESSION["Player"]);
+
+		$stmt->execute();
 
 		selectNextPlayer();
 	}

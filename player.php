@@ -103,8 +103,6 @@
 						$stmt->execute();
 					}
 
-					echo("gwgawghwahga");
-
 					$_SESSION["Player"] = $playerName; //Saving the name of the client in the session variable
 				}
 			}

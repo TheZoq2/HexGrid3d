@@ -35,6 +35,7 @@
         <script src="js/dataReader.js"></script>
         <script src="js/UI.js"></script>
         <script src="js/resources.js"></script>
+        <script src="js/pathfinder.js"></script>
 
         <script src="js/3d/three.js"></script>
         <script src="js/3d/ObjLoader.js"></script>

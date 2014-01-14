@@ -35,8 +35,11 @@ function mainLoop()
 	{
 		showUI();
 
-		//if a building is selected
-		if(selTool == 1)
+		if(selTool == 0)
+		{
+			unitInput(); //In game.js (above addTurnBuilding)
+		}
+		if(selTool == 1)//if a building is selected
 		{
 			var tileX = hexFromCordX(mouseX3d, mouseZ3d);
 			var tileZ = hexFromCordY(mouseX3d, mouseZ3d);
@@ -88,6 +91,9 @@ function mainLoop()
 
 			lastUpdateRequest = totalTime;
 		}
+
+		//Updating units
+		updateUnits(); //In game.js, same as unitInput
 	}
 	if(gameState == 2) //waiting for turn
 	{
@@ -246,6 +252,9 @@ function handleBuildingData(data)
 				object: object
 			};
 
+			//Making the tile non-walkable
+			grid[posX][posY].walkable = false;
+
 			scene.add(buildings[i].object); 
 		}
 	}
@@ -289,7 +298,82 @@ function handleResourceData(data)
 }
 function handleUnitData(data)
 {
+	//Interpreting the data (Works the same way as the building data)
+	unitStr = data.split("|");
+	for(var i = 0; i < unitStr.length; i++)
+	{
+		varArray = separateVariables(unitStr[i]);
+		var ID = -1;
+		var type = 0;
+		var posX = 0;
+		var posZ = 0;
+		var health = 0;
+		var owner = "";
+		for(var n = 0; n < varArray.length; n++)
+		{
+			var varType = getVarType(varArray[n]);
+			var varValue = getVarValue(varArray[n]);
 
+			if(varType == "ID")
+			{
+				ID = parseInt(varValue)
+			}
+			if(varType == "type")
+			{
+				type = parseInt(varValue)
+			}
+			if(varType == "x")
+			{
+				posX = parseInt(varValue)
+			}
+			if(varType == "z")
+			{
+				posZ = parseInt(varValue)
+			}
+			if(varType == "health")
+			{
+				health = parseInt(varValue)
+			}
+			if(varType == "owner")
+			{
+				owner = varValue;
+			}
+		}
+
+		//Creating new units
+		if(ID != -1) //Making sure the string actually had some data
+		{
+			//Checking if the unit exists already
+			var exists = false;
+			var oldIndex = 0;
+			for(var i = 0; i < units.length; i++)
+			{
+				if(units[i].ID == ID)
+				{
+					exists = true;
+					oldIndex = i;
+				}
+			}
+			if(exists == true)
+			{
+				//Update that unit instead
+				units[oldIndex].ID = ID;
+				units[oldIndex].setPosition(posX, posZ);
+				units[oldIndex].health = health;
+				units[oldIndex].owner = owner;
+				units[oldIndex].type = type;
+			}
+			else //Add a new unit
+			{
+				unit = new unitProt(type, posX, posZ);
+				unit.ID = ID;
+				unit.health = health;
+				unit.owner = owner;
+
+				units[units.length] = unit;
+			}
+		}
+	}
 }
 
 function onTurnUpdate(data) //Function to run when a response from an update request has been sent

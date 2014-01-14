@@ -42,7 +42,6 @@ function setupUI()
 
 		unitGroup.appendChild(button);
 	}
-	/**/
 }
 
 function addClickListener(element, newID, newTool) //Needed to get the ID into the onClick function

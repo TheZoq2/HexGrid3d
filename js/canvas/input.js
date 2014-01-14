@@ -23,6 +23,7 @@ var frameScroll;
 var releaseTime;
 var clickX;
 var clickY;
+var rightClick = false;
 
 var lookingAtX = 5;
 var lookingAtZ = 5;
@@ -109,27 +110,40 @@ function updateInput() //Call this to get all mouse hold features working
 
 function doMouseDown(e)
 {
-    mouseHeld = true;
+    if(e.button !== 2) //If this is not a right click
+    {
+        mouseHeld = true;
 
-    //Saving the location of the click
-    clickX = getMouseX();
-    clickY = getMouseY();
+        //Saving the location of the click
+        clickX = getMouseX();
+        clickY = getMouseY();
 
-    mouseHoldStart = totalTime;
+        mouseHoldStart = totalTime;
+    }
+    else
+    {
+    	rightClick = true;
+    }
 }
 function doMouseUp(e)
 {
+	if(e.button !== 2)
+	{
+	    mouseHeld = false;
 
-    mouseHeld = false;
+	    mouseDown = false;
 
-    mouseDown = false;
+	    if(mouseHeldFor < mouseHoldTime && clickX == getMouseX() && clickY == getMouseY())
+	    {
+	    	mouseClick = true;
 
-    if(mouseHeldFor < mouseHoldTime && clickX == getMouseX() && clickY == getMouseY())
-    {
-    	mouseClick = true;
-
-    	releaseTime = totalTime;
-    }
+	    	releaseTime = totalTime;
+	    }
+	}
+	else
+	{
+		rightClick = false;
+	}
 }
 
 function getMouseDown()
