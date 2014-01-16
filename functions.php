@@ -84,4 +84,35 @@
 			$_SESSION["explored"][$neighbours[$i][0]][$neighbours[$i][1]] = 2;
 		}*/
 	}
+
+	function createBuilding($posX, $posY, $type)
+	{
+		//Connecting to the database
+		require_once("connect.php");
+
+		$dbo = getDBO("map");
+
+		//Creating an SQL request
+		$sqlRequest = "INSERT INTO `buildings`(`id`, `posX`, `posY`, `type`, `owner`) VALUES ('',:posX,:posY,:type,:owner)";
+		$stmt = $dbo->prepare($sqlRequest);
+		$stmt->bindParam(":posX", $posX);
+		$stmt->bindParam(":posY", $posY);
+		$stmt->bindParam(":type", $type);
+		$stmt->bindParam(":owner", $_SESSION["Player"]);
+		$stmt->execute();
+	}
+	function createUnit($posX, $posY, $type, $health)
+	{
+		require_once("connect.php");
+
+		$dbo = getDBO("map");
+		$sqlRequest = "INSERT INTO `units`(`type`, `x`, `z`, `health`, `owner`) VALUES (:type;:posX,:posY,:health,:owner)";
+		$stmt = $dbo->prepare($sqlRequest);
+		$stmt->bindParam(":type", $type);
+		$stmt->bindParam(":posX", $posX);
+		$stmt->bindParam(":posY", $posY);
+		$stmt->bindParam(":health", $health);
+		$stmt->bindParam(":owner", $_SESSION["Player"]);
+		$stmt->execute();
+	}
 ?>

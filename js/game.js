@@ -1,3 +1,5 @@
+var player;
+
 var grid;
 
 var buildings = Array();
@@ -64,7 +66,9 @@ function setupData()
 
 		scaleX: 0.7,
 		scaleY: 0.7,
-		scaleZ: 0.7
+		scaleZ: 0.7,
+
+		name: "Main base"
 	};
 	//Oil rig thing
 	buildingData[1] = {
@@ -82,11 +86,13 @@ function setupData()
 
 		scaleX: 0.7,
 		scaleY: 0.7,
-		scaleZ: 0.7
+		scaleZ: 0.7,
+
+		name: "Oil drill"
 	};
 	buildingData[2] = {
 		reqTiles: [],
-		reqNeighbours: [0],
+		reqNeighbours: [],
 		oilCost: 200,
 		foodCost: 200,
 		metalCost: 550,
@@ -99,11 +105,13 @@ function setupData()
 
 		scaleX: 0.7,
 		scaleY: 0.7,
-		scaleZ: 0.7
+		scaleZ: 0.7,
+
+		name: "Farm"
 	};
 	buildingData[3] = {
 		reqTiles: [3],
-		reqNeighbours: [0],
+		reqNeighbours: [],
 		oilCost:300,
 		foodCost: 250,
 		metalCost: 300,
@@ -116,7 +124,9 @@ function setupData()
 
 		scaleX: 0.7,
 		scaleY: 0.7,
-		scaleZ: 0.7
+		scaleZ: 0.7,
+
+		name: "Crystal mine"
 	};
 
 	tileData[0] = {
@@ -138,9 +148,11 @@ function setupData()
 
 	unitBase[0] = new unitBaseProt("3d/Mech.dae", 0.05, 2);
 	unitBase[0].loadObject(0);
+	unitBase[0].name = "Mech";
 
 	unitBase[1] = new unitBaseProt("3d/APC.dae", 0.08, 3);
 	unitBase[1].loadObject(1);
+	unitBase[1].name = "Scout";
 }
 
 function loadSprites()

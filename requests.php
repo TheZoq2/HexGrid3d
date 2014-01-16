@@ -1,4 +1,6 @@
 <?php
+	require_once("functions.php");
+
 	class Building
 	{
 		public function __construct($type, $x, $y)
@@ -147,35 +149,6 @@
 		$stmt->execute();
 	}
 
-	function createBuilding($posX, $posY, $type)
-	{
-		//Connecting to the database
-		require_once("connect.php");
-
-		$dbo = getDBO("map");
-
-		//Creating an SQL request
-		$sqlRequest = "INSERT INTO `buildings`(`id`, `posX`, `posY`, `type`) VALUES ('',:posX,:posY,:type)";
-		$stmt = $dbo->prepare($sqlRequest);
-		$stmt->bindParam(":posX", $posX);
-		$stmt->bindParam(":posY", $posY);
-		$stmt->bindParam(":type", $type);
-		$stmt->execute();
-	}
-	function createUnit($posX, $posY, $type, $health)
-	{
-		require_once("connect.php");
-
-		$dbo = getDBO("map");
-		$sqlRequest = "INSERT INTO `units`(`type`, `x`, `z`, `health`) VALUES (:type;:posX,:posY,:health)";
-		$stmt = $dbo->prepare($sqlRequest);
-		$stmt->bindParam(":type", $type);
-		$stmt->bindParam(":posX", $posX);
-		$stmt->bindParam(":posY", $posY);
-		$stmt->bindParam(":health", $health);
-		$stmt->execute();
-	}
-
 	function returnMapData()
 	{
 		require_once("map.php");
@@ -268,7 +241,8 @@
 			$responseString .="posX=" . $posX;
 			$responseString .=",posY=" . $posY;
 			$responseString .=",type=" . $type;
-			$responseString .="|";
+			$responseString .=",owner=" . $_SESSION["Player"];
+ 			$responseString .="|";
 		}
 
 		echo $responseString;

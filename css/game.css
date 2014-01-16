@@ -1,6 +1,8 @@
 #UI_rightBar
 {
-	background-color: white;
+	padding:10px;
+	padding-top: 38px; /*To compensate for the resource bar*/
+	background-color: #333333;
 	width: 200px;
 	height: 500px;
 	position:fixed;
@@ -8,12 +10,16 @@
 	right: 0px;
 	top: 0px;
 
-	padding:10px;
+	border: 2px solid #444444;
+}
+#UI_rightBar p
+{
+	color: #ffffff;
 }
 
 #UI_controlBar
 {
-	background-color: #ffffff;
+	background-color: #333333;
 	position: fixed;
 	width: 210px;
 	height: 210px;
@@ -32,22 +38,37 @@
 	height: 32px;
 	top: 0px;
 	left: 0px;
+	padding: 2px;
 
-	background-color: #ffffff;
+	background: #424242; /* Old browsers */
+	background: -moz-linear-gradient(top, #424242 32%, #262626 97%, #444444 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(32%,#424242), color-stop(97%,#262626), color-stop(100%,#444444)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #424242 32%,#262626 97%,#444444 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #424242 32%,#262626 97%,#444444 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #424242 32%,#262626 97%,#444444 100%); /* IE10+ */
+	background: linear-gradient(to bottom, #424242 32%,#262626 97%,#444444 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#424242', endColorstr='#444444',GradientType=0 ); /* IE6-9 */
+
+	z-index: 1;
 }
 .UI_resourceImg
 {
 	float: left;
 }
-.UI_resource
+.UI_resource p
 {
 	float: left;
 	min-width: 100px;
 }
-.UI_resource_p
+.UI_resource p
 {
 	font-size: 32px;
+	color: #ffffff;
 	float: left;
+}
+.UI_resource_p
+{
+	
 }
 
 #UI_b_endTurn
@@ -71,19 +92,37 @@
 
 .UI_buildingButton
 {
-	background-color: #FF0000;
-	width: 60px;
-	height: 60px;
+	width: 190px;
+	height: 45px;
 	float: left;
-	margin: 5px;
+	margin: 5px 0px;
+
+	cursor: pointer;
+
+	border-radius: 5px;
+
+	background: #0037ff; /* Old browsers */
+    background: -moz-linear-gradient(top,  #0037ff 0%, #0021ff 31%, #0037ff 64%, #0f1fff 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0037ff), color-stop(31%,#0021ff), color-stop(64%,#0037ff), color-stop(100%,#0f1fff)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #0037ff 0%,#0021ff 31%,#0037ff 64%,#0f1fff 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #0037ff 0%,#0021ff 31%,#0037ff 64%,#0f1fff 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #0037ff 0%,#0021ff 31%,#0037ff 64%,#0f1fff 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #0037ff 0%,#0021ff 31%,#0037ff 64%,#0f1fff 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0037ff', endColorstr='#0f1fff',GradientType=0 ); /* IE6-9 */
+
+    border: #1d2dff solid 1px;
+
 }
 .UI_buildingButton:hover
 {
-	background-color: #aa3333;
-}
-.UI_buildingButton:active
-{
-	background-color: #33aa33;
+	background: #0037ff; /* Old browsers */
+    background: -moz-linear-gradient(top,  #0037ff 0%, #0061ff 32%, #0061ff 63%, #0f87ff 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0037ff), color-stop(32%,#0061ff), color-stop(63%,#0061ff), color-stop(100%,#0f87ff)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #0037ff 0%,#0061ff 32%,#0061ff 63%,#0f87ff 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #0037ff 0%,#0061ff 32%,#0061ff 63%,#0f87ff 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #0037ff 0%,#0061ff 32%,#0061ff 63%,#0f87ff 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #0037ff 0%,#0061ff 32%,#0061ff 63%,#0f87ff 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0037ff', endColorstr='#0f87ff',GradientType=0 ); /* IE6-9 */
 }
 
 

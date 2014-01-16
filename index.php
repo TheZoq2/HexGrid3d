@@ -14,6 +14,10 @@
 
     //unset($_SESSION["explored"]);
 
+    $dataForm = "<form>";//A form for storing data that JS needs to get from PHP and can't be sent using ajax (for security, the values are taken out of the form by JS when the page is loaded)
+    $dataForm .= "<input id='name' type='hidden' value='" . $_SESSION["Player"] . "'></input>";
+    $dataForm .= "</form>";
+
     require_once("functions.php");
 ?>
 
@@ -38,7 +42,7 @@
         <script src="js/pathfinder.js"></script>
         <script src="js/gridFunctions.js"></script>
         <script src="js/units.js"></script>
-        
+
         <script src="js/3d/three.js"></script>
         <script src="js/3d/ObjLoader.js"></script>
         <script src="js/3d/ObjectLoaders.js"></script>
@@ -76,6 +80,10 @@
         </div>
 
         <div id="canvasContainer"></div>
+
+        <?php
+            echo($dataForm);
+        ?>
 
         <script>
             setup();

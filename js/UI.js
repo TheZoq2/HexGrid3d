@@ -28,6 +28,8 @@ function setupUI()
 
 			console.log(index);
 		}*/
+		button.innerHTML = "<p>" + buildingData[i].name + "</p>";
+
 		button = addClickListener(button, i, 1);
 
 		buildingGroup.appendChild(button);
@@ -37,6 +39,8 @@ function setupUI()
 	{
 		var button = document.createElement("div");
 		button.setAttribute("class", "UI_buildingButton");
+
+		button.innerHTML = "<p>" + unitBase[i].name + "</p>";
 
 		button = addClickListener(button, i, 2);
 

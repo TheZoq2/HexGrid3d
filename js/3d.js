@@ -369,7 +369,7 @@ function getPointAt2d(object, targetX, targetZ) //Returns the angle that the obj
 	var posZ = object.position.z;
 
 	var diffX = targetX - posX;
-	var diffZ = targetZ - posZ;
+	var diffZ = - targetZ + posZ; //Since 3d goes from top to bottom, the positions are inverted...
 
 	var angle = Math.atan2(diffZ, diffX) //Z-X because aTan is inverted in JS
 

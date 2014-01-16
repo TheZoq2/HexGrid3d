@@ -13,6 +13,8 @@ var selID = 0;
 var lastID = 0;
 var lastTool;
 
+var firstRequest = true; //If this is false, it is the first time a building request is recieved, the camera will therefore center on the first building owned by the player
+
 function mainLoop()
 {
 	//updateInput();
@@ -228,6 +230,7 @@ function handleBuildingData(data)
 		var posX = -1;
 		var posY = -1;
 		var type = 0;
+		var owner = "";
 
 		for(var n = 0; n < varArray.length; n++) //Going thru all the variables in the data section
 		{
@@ -247,6 +250,10 @@ function handleBuildingData(data)
 			{
 				type = parseInt(varValue);
 			}
+			if(varType == "owner")
+			{
+				owner = varValue;
+			}
 		}
 
 		if(posX != -1 && posY != -1) //Making sure type and positions are relevant
@@ -264,7 +271,8 @@ function handleBuildingData(data)
 				x: posX,
 				y: posY,
 				type: type,
-				object: object
+				object: object,
+				owner: owner
 			};
 
 			//Making the tile non-walkable
@@ -272,6 +280,23 @@ function handleBuildingData(data)
 
 			scene.add(buildings[i].object); 
 		}
+	}
+
+	if(firstRequest == true)
+	{
+		console.log("looking for building for camera");
+		for(var i = 0; i < buildings.length; i++)
+		{
+			if(buildings[i].owner == player)
+			{
+				lookingAtX = coordFromHexX(buildings[i].x, buildings[i].y);
+				lookingAtZ = coordFromHexY(buildings[i].x, buildings[i].y);
+
+				break;
+			}
+		}
+
+		firstRequest = false;
 	}
 
 	updateBuildingObjects();

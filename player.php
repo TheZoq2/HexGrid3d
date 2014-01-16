@@ -1,4 +1,6 @@
 <?php
+	require_once("functions.php");
+
 	//Starting the sessions
 	session_start();
 
@@ -19,7 +21,14 @@
 			$stmt->bindParam(":name", $_SESSION["Player"]);
 			$stmt->execute();
 
+			//Removing all the units and buildings owned by the player
+			$sqlRequest = "DELETE FROM `buildings` WHERE `owner`=:name; DELETE FROM `units` WHERE `owner`=:name";
+			$stmt = $dbo->prepare($sqlRequest);
+			$stmt->bindParam(":name", $_SESSION["Player"]);
+			$stmt->execute();
+
 			unset($_SESSION["Player"]);
+			unset($_SESSION["explored"]);
 			$content .= "You have logged out sucessfully";
 		}
 		elseif($_POST["action"] == "create") //The user wants to create a new player
@@ -101,6 +110,28 @@
 						$stmt->bindParam(":food", $startFood);
 						$stmt->bindParam(":lastActive", $time);
 						$stmt->execute();
+
+						//Giving the player a starter building and unit
+						//Getting the size of the map
+						$dbo = getDBO("map");
+						$sql = "SELECT * FROM `base` WHERE 1";
+
+						$stmt = $dbo->prepare($sql);
+						$stmt->execute();
+						$result = $stmt->fetch();
+
+						$sizeX = $result["sizeX"];
+						$sizeZ = $result["sizeY"];
+
+						$_SESSION["Player"] = $playerName;
+						//Giving the building and unit
+						$positionX = rand(1, $sizeX - 1);
+						$positionZ = rand(1, $sizeZ - 1); //1 because we want to place a unit next to the building
+						createBuilding($positionX, $positionZ, 0);
+						//Exploring the surrounding area
+						exploreAround($positionX, $positionZ, 3);
+
+						createUnit($positionX + 1, $positionZ, 1, 100);
 					}
 
 					$_SESSION["Player"] = $playerName; //Saving the name of the client in the session variable

@@ -25,6 +25,12 @@ function setup()
 
 	load3d(); //3d.js
 
+    //Getting the playername
+    var namefield = document.getElementById("name");
+    player = namefield.value;
+    //Removing the value for security
+    namefield.value = "";
+
     //Starting the main game loop
     setInterval(function(){mainLoop()}, 1000/60);
 }
