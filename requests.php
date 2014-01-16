@@ -321,8 +321,8 @@
 			$response .= "type=" . $unit["type"] . ",";
 			$response .= "x=" . $unit["x"] . ",";
 			$response .= "z=" . $unit["z"] . ",";
-			$response .= "health" . $unit["health"] . ",";
-			$response .= "owner" . $unit["owner"];
+			$response .= "health=" . $unit["health"] . ",";
+			$response .= "owner=" . $unit["owner"];
 
 			$response .= "|";
 		}
@@ -555,6 +555,73 @@
 		$stmt->bindParam(":name", $_SESSION["Player"]);
 
 		$stmt->execute();
+
+////////////////////////////////////////////////////////////////////
+//						Moved units
+////////////////////////////////////////////////////////////////////
+		//handeling units
+		echo($_POST["movedUnits"]);
+
+		$unitStr = $_POST["movedUnits"];
+		$unitStrings = explode("|", $unitStr);
+		$newUnits = array();
+
+		foreach($unitStrings as $thisStr)
+		{
+			//splitting the string into the data
+			$dataStrings = explode(",", $thisStr);
+
+			//Variables to store the data in
+			$ID = -1;
+			$uX = 5;
+			$uZ = 5;
+			$type = 0;
+
+			foreach($dataStrings as $data)
+			{
+				echo($data);
+
+				//Spliting the string into datatype and value
+				$dataArray = explode("=", $data);
+				//Checking what kind of data this is
+				$dataType = $dataArray[0];
+				switch ($dataType) {
+					case 'ID':
+						$ID = intval( $dataArray[1] );
+
+						break;
+					case 'xPos':
+						$uX = intval($dataArray[1]);
+						break;
+					case 'zPos':
+						$uZ = intval($dataArray[1]);
+						break;
+					case 'type':
+						$type = intval($dataArray[1]);
+						break;
+					default:
+						# code...
+						break;
+				}
+			}
+
+			if($ID != -1) //There was actually data
+			{	
+				require_once("functions.php"); //For exploring
+				exploreAround($uX, $uZ, $unitData[$type]->getSightRange());
+				//Add the data to the database
+				$sqlRequest = "UPDATE `units` SET `x`=:x,`z`=:z WHERE `ID`=:ID";
+
+				$stmt = $dbo->prepare($sqlRequest);
+				$stmt->bindParam(":ID", $ID);
+				$stmt->bindParam(":x", $uX);
+				$stmt->bindParam(":z", $uZ);
+				$stmt->execute();
+
+				echo($ID);
+			}
+		}
+
 
 		selectNextPlayer();
 	}

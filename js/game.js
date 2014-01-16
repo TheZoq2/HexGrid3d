@@ -1,125 +1,10 @@
 var grid;
+
 var buildings = Array();
 var buildingData = Array();
 var borderSprite;
 
 var turnBuildings = Array(); //Buildings to be constructed this turn
-
-var unitBase = Array();
-var units = Array();
-var turnUnits = Array();
-
-function unitBaseProt(objName, speed, moverange)
-{
-	this.objName = objName,
-	this.object = 0;
-	this.material = 0;
-
-	this.speed = 0;
-	this.moverange = 0;
-
-	this.scaleX = 0.3;
-	this.scaleY = 0.3;
-	this.scaleZ = 0.3;
-
-	//functions
-	this.loadObject = function(storeID) //ID is the ID of this object and is used for storing the object when it has been loaded
-	{
-		var objName = this.objName;
-
-		var scaleX = this.scaleX;
-		var scaleY = this.scaleY;
-		var scaleZ = this.scaleZ;
-
-		var ID = storeID;
-		var loader = new THREE.ColladaLoader();
-		loader.options.convertUpAxis = true;
-		loader.load( objName, function ( collada ) {
-
-			var dae = collada.scene;
-			skin = collada.skins[ 0 ];
-
-			dae.scale.x = scaleX;
-			dae.scale.y = scaleY;
-			dae.scale.z = scaleZ;
-			dae.updateMatrix();
-
-			var material = new THREE.MeshPhongMaterial({color: 0x777777});
-
-			var children = getObjectChildren(dae)
-			for(var i = 0; i < children.length; i++)
-			{
-				children[i].castShadow = true;
-				children[i].recieveShadow = true;
-
-				children[i].material = material;
-			}
-
-			//Storing the object
-			unitBase[ID].setObject(dae);
-		} );
-	}
-	this.setObject = function(object)
-	{
-		this.object = object;
-	}
-}
-function unitProt(type, tileX, tileZ)
-{
-	this.id = 0;
-	this.type = type;
-	this.owner = "";
-	this.health = 0;
-	this.path = Array();
-
-	this.object = unitBase[type].object.clone();
-	this.tileX = tileX;
-	this.tileY = 0;
-	this.tileZ = tileZ;
-
-	this.x = coordFromHexX(tileX, tileZ);
-	this.y = 0;
-	this.z = coordFromHexY(tileX, tileZ);
-
-	this.object.position.x = this.x;
-	this.object.position.y = this.y;
-	this.object.position.z = this.z;
-
-	this.setPosition = function(tileX, tileZ)
-	{
-		this.tileX = tileX;
-		this.tileY = 0;
-		this.tileZ = tileZ;
-
-		this.x = coordFromHexX(tileX, tileZ);
-		this.y = 0;
-		this.z = coordFromHexY(tileX, tileZ);
-
-		this.object.position.x = this.x;
-		this.object.position.y = this.y;
-		this.object.position.z = this.z;
-	}
-	this.setPath = function(path)
-	{
-		this.path = path;
-	}
-
-	this.setMaterial = function(material)
-	{
-		var children = getObjectChildren(this.object)
-		for(var i = 0; i < children.length; i++)
-		{
-			children[i].castShadow = true;
-
-			children[i].material = material;
-		}
-	}
-
-	var material = new THREE.MeshPhongMaterial({color: 0x777777});
-	this.setMaterial(material);
-	//Adding the object
-	scene.add(this.object);
-}
 
 var tileSprites = Array();
 var tileData = Array();
@@ -251,8 +136,11 @@ function setupData()
 		material: 0
 	};
 
-	unitBase[0] = new unitBaseProt("3d/Mech.dae", 0.2, 2);
+	unitBase[0] = new unitBaseProt("3d/Mech.dae", 0.05, 2);
 	unitBase[0].loadObject(0);
+
+	unitBase[1] = new unitBaseProt("3d/APC.dae", 0.08, 3);
+	unitBase[1].loadObject(1);
 }
 
 function loadSprites()
@@ -427,52 +315,6 @@ function updateBuildingObjects() //Called when new data about the buildings has 
 		else
 		{
 			hideObject(buildings[i].object);
-		}
-	}
-}
-
-var selUnit = -1; //The unit that is currently selected
-function unitInput()
-{
-	//Checking what tile the user is hovering over
-	var tileX = hexFromCordX(mouseX3d, mouseZ3d);
-	var tileZ = hexFromCordY(mouseX3d, mouseZ3d);
-
-	//Checking if a user is in that tile
-	if(mouseClick == true)
-	{
-		var unitSelected = false;
-		for(var i = 0; i < units.length; i++)
-		{
-			if(units[i].tileX == tileX && units[i].tileZ == tileZ)
-			{
-				unitSelected = true;
-
-				selUnit = i;
-
-				console.log("Selected");
-			}
-		}
-		if(unitSelected == false)
-		{
-			console.log("None selected");
-			selUnit = -1;
-		}
-	}
-
-	if(rightClick == true && selUnit != -1) //Moving the selected unit when the user right clicks
-	{
-		units[selUnit].setPath(findPath(units[selUnit].tileX, units[selUnit].tileZ, tileX, tileZ).length);
-		//units[selUnit].setPosition(tileX, tileZ);
-	}
-}
-function updateUnits()
-{
-	for(var i = 0; i < units.length; i++)
-	{
-		if(units[i].path.length > 0) //If the unit has a path
-		{
-			
 		}
 	}
 }
@@ -790,4 +632,3 @@ function coordFromHexY(x, y)
 
 	return yCoord;
 }
-

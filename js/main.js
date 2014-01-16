@@ -23,6 +23,8 @@ function mainLoop()
     //Input 
     updateInput();
 
+   	resetHighlights();
+
 	if(gameState == 0)
 	{
 		requestMap();
@@ -90,6 +92,19 @@ function mainLoop()
 			createRequest("requests.php", "type=r_ping", function(){}); //Sending a request to let the server know that the player is still online
 
 			lastUpdateRequest = totalTime;
+		}
+
+		if(selTool == 1 || selTool == 2)
+		{
+			if(rightClick == true)
+			{
+				selTool = 0;
+				selID = 0;
+				selUnit = -1;
+
+				//Removing the cursor object
+				removeCursorObject();
+			}
 		}
 
 		//Updating units
@@ -346,12 +361,12 @@ function handleUnitData(data)
 			//Checking if the unit exists already
 			var exists = false;
 			var oldIndex = 0;
-			for(var i = 0; i < units.length; i++)
+			for(var n = 0; n < units.length; n++)
 			{
-				if(units[i].ID == ID)
+				if(units[n].ID == ID)
 				{
 					exists = true;
-					oldIndex = i;
+					oldIndex = n;
 				}
 			}
 			if(exists == true)
@@ -362,6 +377,7 @@ function handleUnitData(data)
 				units[oldIndex].health = health;
 				units[oldIndex].owner = owner;
 				units[oldIndex].type = type;
+				units[oldIndex].movesLeft = unitBase[type].moverange;
 			}
 			else //Add a new unit
 			{
@@ -414,7 +430,22 @@ function endTurn() //This function is run when the user ends the tiurn
 
 		endTurnRequest += "|";
 	}
-	console.log(endTurnRequest);
+	
+	endTurnRequest += "&movedUnits=";
+	for(var i = 0; i < units.length; i++)
+	{
+		console.log("movedThisTurn " + units[i].movedThisTurn);
+		if(units[i].movedThisTurn == true)
+		{
+			console.log("unit moved");
+			endTurnRequest += "ID=" + units[i].ID + ",";
+			endTurnRequest += "xPos=" + units[i].targetX + ","; //Target since the tile is the current position and is updated when moving
+			endTurnRequest += "zPos=" + units[i].targetZ + ",";
+			endTurnRequest += "type=" + units[i].type + ",";
+
+			endTurnRequest += "|";
+		}
+	}
 
 	//Sending that data
 	endRequest = createRequest("requests.php", endTurnRequest, function(response){

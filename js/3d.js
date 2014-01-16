@@ -108,13 +108,13 @@ function load3d()
 		tileData[i].material = new THREE.MeshPhongMaterial( {map: texture} );
 	}
 
+	loadHighlighter();
+
 	render();
 }
 function createTileObjects()
 {
 	//defaultTextureMaterial = new THREE.MeshBasicMaterial( {color: 0x00ffff} );
-
-	console.log("Starting to set objects");
 	//Creating objects for all tiles
 	for(var x = 0; x < grid.length; x++)
 	{
@@ -149,8 +149,6 @@ function createTileObjects()
 			scene.add(grid[x][z].object);
 		}
 	}
-
-	console.log("Set objects");
 }
 
 function setGroundMaterial(posX, posY)
@@ -342,6 +340,10 @@ function setCursorObjectPos(x, y, z)
 		cursorObject.position.z = z;
 	}
 }
+function removeCursorObject()
+{
+	scene.remove(cursorObject);
+}
 
 function screenTo3d(x, y, yPlane)
 {
@@ -359,4 +361,17 @@ function screenTo3d(x, y, yPlane)
 
 	var pos = camera.position.clone().add( dir.multiplyScalar( distance ) );
 	return pos;
+}
+
+function getPointAt2d(object, targetX, targetZ) //Returns the angle that the object should be rotated at on the y-axis to point at a target on the y plane
+{
+	var posX = object.position.x;
+	var posZ = object.position.z;
+
+	var diffX = targetX - posX;
+	var diffZ = targetZ - posZ;
+
+	var angle = Math.atan2(diffZ, diffX) //Z-X because aTan is inverted in JS
+
+	return angle;
 }
