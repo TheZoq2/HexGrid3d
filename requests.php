@@ -1,5 +1,6 @@
 <?php
 	require_once("functions.php");
+	require_once("data.php");
 
 	class Building
 	{
@@ -113,7 +114,7 @@
 		}
 		if($_POST["type"] == "r_endTurn")
 		{
-			handleEndTurnRequest();
+			handleEndTurnRequest($buildingData);
 
 			exit(); //Exiting the PHP code since the request has been taken care of
 		}
@@ -307,6 +308,9 @@
 
 	function handleEndTurnRequest()
 	{
+		//Because php is stupid :/
+		global $buildingData;
+		global $unitData;
 		//Data about buildings is sent as a string where each building is separated by |. Each building part contains sevral data fields separated by ",".
 		//The data has a datatype and a value separated by "="
 
@@ -359,8 +363,8 @@
 				//Revealing the surrounded area
 				require_once("functions.php");
 
-				require_once("data.php");
 
+				print_r($buildingData);	
 				exploreAround($bX, $bY, $buildingData[$bType]->getSightRange());
 			}
 			$cBuilding++;
@@ -373,7 +377,7 @@
 		$sqlRequest = "INSERT INTO `buildings`(`id`, `posX`, `posY`, `type`, `owner`) VALUES ('',:xPos,:yPos,:type,:owner)";
 		$stmt = $dbo->prepare($sqlRequest);
 
-		require_once("data.php");
+		//require_once("data.php");
 		$costSql = "UPDATE `players` SET `oil`=:oil,`crystal`=:crystal,`metal`=:metal,`food`=:food WHERE `Name`=:name";
 		$costStmt = $dbo->prepare($costSql);
 		$costStmt->bindParam(":name", $_SESSION["Player"]);
@@ -448,14 +452,13 @@
 
 			if($uType != -1)
 			{
-				echo ("uType " . $uType);
 				$newUnits[count($newUnits)] = new Unit($uType, $uX, $uZ);
 			}
 		}
 		//Adding the new units to the database
 		foreach($newUnits as $unit)
 		{
-			require_once("data.php"); //For the data
+			//require_once("data.php"); //For the data
 			require_once("functions.php"); //For exploring
 
 			require_once("connect.php"); //To connect to the databse
@@ -482,7 +485,7 @@
 		}
 
 		//This would be a function, but today PHP decided to be special
-		require_once("data.php");
+		//require_once("data.php");
 
 		$dbo = getDBO("map");
 		//Giving the player some money

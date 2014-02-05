@@ -459,7 +459,6 @@ function endTurn() //This function is run when the user ends the tiurn
 	endTurnRequest += "&movedUnits=";
 	for(var i = 0; i < units.length; i++)
 	{
-		console.log("movedThisTurn " + units[i].movedThisTurn);
 		if(units[i].movedThisTurn == true)
 		{
 			console.log("unit moved");

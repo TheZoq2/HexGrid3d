@@ -151,5 +151,5 @@
 	$unitData = array();
 
 	$unitData[0] = new UnitBase(2, 100, 0, 0, 0, 0);
-	$unitData[1] = new UnitBase(3, 100, 0, 0, 0, 0)
+	$unitData[1] = new UnitBase(3, 100, 0, 0, 0, 0);
 ?>

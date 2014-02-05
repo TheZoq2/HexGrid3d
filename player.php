@@ -1,4 +1,6 @@
 <?php
+	echo(phpversion());
+
 	require_once("functions.php");
 
 	//Starting the sessions

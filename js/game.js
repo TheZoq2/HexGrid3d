@@ -119,7 +119,7 @@ function setupData()
 
 		sightRange: 2,
 
-		objectPath: "3d/MainBase.dae",
+		objectPath: "3d/mine2.dae",
 		object: 0,
 
 		scaleX: 0.7,

@@ -1,7 +1,4 @@
 <?php
-	
-	require_once("data.php");
-
 	if(isset($_SESSION["explored"]) == false)
 	{
 		//Checking the size of the map

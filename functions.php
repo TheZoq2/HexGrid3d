@@ -1,4 +1,6 @@
 <?php
+	require_once("data.php");
+
 	class Position
 	{
 		public function __construct($x, $y)
@@ -13,10 +15,10 @@
 
 	function getNeighbours($x, $y)
 	{
-		$neighbourPos = [
-			[ [+1,  0], [ 0, -1], [-1, -1], [-1,  0], [-1, +1], [ 0, +1] ],
-			[ [+1,  0], [+1, -1], [ 0, -1], [-1,  0], [ 0, +1], [+1, +1] ]
-		];
+		$neighbourPos = array(
+			array( array(+1,  0), array( 0, -1 ), array(-1, -1), array(-1,  0), array(-1, +1), array(0, +1) ),
+			array( array(+1,  0), array(+1, -1), array( 0, -1), array(-1,  0), array( 0, +1), array(+1, +1) )
+		);
 		$result = array();
 
 		$mod = $y % 2;
