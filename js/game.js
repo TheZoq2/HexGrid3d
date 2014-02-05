@@ -330,6 +330,21 @@ function updateBuildingObjects() //Called when new data about the buildings has 
 		}
 	}
 }
+function updateUnitObjects() //Called when new data about the units is recieved
+{
+	for(var i = 0; i < units.length; i++)
+	{
+		console.log(units[i].tileX + "    " + units[i].tileZ);
+		if(grid[units[i].tileX][units[i].tileZ].visible != 0)
+		{
+			showObject(units[i].object);
+		}
+		else
+		{
+			hideObject(units[i].object);
+		}
+	}
+}
 
 function addTurnBuilding(type, x, y)
 {

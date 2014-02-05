@@ -154,11 +154,14 @@ function unitInput()
 		var unitSelected = false;
 		for(var i = 0; i < units.length; i++)
 		{
-			if(units[i].tileX == tileX && units[i].tileZ == tileZ && units[i].owner == player)
+			if(units[i].owner == player)
 			{
-				unitSelected = true;
+				if(units[i].tileX == tileX && units[i].tileZ == tileZ && units[i].owner == player)
+				{
+					unitSelected = true;
 
-				selUnit = i;
+					selUnit = i;
+				}
 			}
 		}
 		if(unitSelected == false)

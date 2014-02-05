@@ -29,6 +29,8 @@ var lookingAtX = 5;
 var lookingAtZ = 5;
 var cameraHeight = 10;
 
+var mouseClickSaved = false;
+
 function updateInput() //Call this to get all mouse hold features working
 {
 	oldMouseX = mouseFrameX;
@@ -48,10 +50,12 @@ function updateInput() //Call this to get all mouse hold features working
 		}
 	}
 
-	if(releaseTime < totalTime  - 100)
+	//if(releaseTime < totalTime  - 100)
+    if(mouseClickSaved == true && mouseClick == true)
 	{
 		mouseClick = false;
 	}
+    mouseClickSaved = true;
 
 	//Calculating the mouse movement
     frameScroll = scrollAmount; //Saving the amount scrolled this frame
@@ -137,6 +141,8 @@ function doMouseUp(e)
 	    {
 	    	mouseClick = true;
 
+            mouseClickSaved = false;
+
 	    	releaseTime = totalTime;
 	    }
 	}
@@ -215,6 +221,8 @@ function keyPressed(e) {
     {
         input.build = true;
     }
+
+    console.log(e.keyCode);
 }
 
 function keyReleased(e) {

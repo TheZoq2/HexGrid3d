@@ -42,6 +42,8 @@ function mainLoop()
 		if(selTool == 0)
 		{
 			unitInput(); //In game.js (above addTurnBuilding)
+
+			lastTool = 0;
 		}
 		if(selTool == 1)//if a building is selected
 		{
@@ -415,6 +417,8 @@ function handleUnitData(data)
 			}
 		}
 	}
+
+	updateUnitObjects();
 }
 
 function onTurnUpdate(data) //Function to run when a response from an update request has been sent

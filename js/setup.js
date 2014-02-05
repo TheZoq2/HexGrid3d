@@ -8,7 +8,7 @@ function setup()
 
     container = document.getElementById("canvasContainer");
 
-    container.onkeydown = keyPressed;
+    container.onkeydown = function(e){keyPressed(e); console.log("Key pressed");};
     container.onkeyup = keyReleased;
     container.addEventListener('DOMMouseScroll', onScroll, false)
     container.onmousewheel = onScroll; //Yeay for browsers!!!

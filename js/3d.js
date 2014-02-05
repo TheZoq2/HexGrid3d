@@ -52,22 +52,22 @@ function setup3d()
 	//camera.rotation.y = Math.PI;
 
 	skylight = new THREE.DirectionalLight(0xffffff, 2);
-	skylight.position.set(35, 12, 25);
-	skylight.target.position.set(25, 0, 10);
+	skylight.position.set(40, 20, 80);
+	skylight.target.position.set(40, 0, 40);
 
 	skylight.castShadow = true;
 	skylight.shadowMapSoft = true;
 	skylight.shadowDarkness = 0.8;
 	skylight.shadowCameraNear = 1;
-	skylight.shadowCameraFar = 50;
-	skylight.shadowCameraLeft = -25;
-	skylight.shadowCameraRight = 25;
+	skylight.shadowCameraFar = 100;
+	skylight.shadowCameraLeft = -40;
+	skylight.shadowCameraRight = 50;
 	skylight.shadowCameraTop = 25;
-	skylight.shadowCameraBottom = -12;
-	//skylight.shadowCameraVisible = true;
+	skylight.shadowCameraBottom = -25;
+	skylight.shadowCameraVisible = true;
 
-	skylight.shadowMapWidth = 1024;
-	skylight.shadowMapHeight = 1024;
+	skylight.shadowMapWidth = 2048;
+	skylight.shadowMapHeight = 2048;
 	scene.add(skylight);
 }
 
