@@ -64,7 +64,7 @@ function setup3d()
 	skylight.shadowCameraRight = 50;
 	skylight.shadowCameraTop = 25;
 	skylight.shadowCameraBottom = -25;
-	skylight.shadowCameraVisible = true;
+	//skylight.shadowCameraVisible = true;
 
 	skylight.shadowMapWidth = 2048;
 	skylight.shadowMapHeight = 2048;

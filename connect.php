@@ -3,7 +3,7 @@
 
 	function getDBO($database)
 	{
-		if(true)
+		if(false)
 		{
 			$database = "160765-te11e-frans";
 			$host = "te11e-frans-160765.mysql.binero.se";
